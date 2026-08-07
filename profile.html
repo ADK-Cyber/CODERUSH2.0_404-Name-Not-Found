@@ -81,11 +81,16 @@
 
     <!-- Custom Script to Fetch Live Status for Logged-In Phone Number -->
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+        function extractDigits(str) {
+            return (str || '').replace(/[^0-9]/g, '').slice(-10);
+        }
+
+        async function renderCitizenTracking() {
             const userPhone = localStorage.getItem('userPhone') || '9876543210';
+            const userDigits = extractDigits(userPhone);
             const phoneDisplay = document.getElementById('user-phone-num');
             if (phoneDisplay) {
-                phoneDisplay.textContent = '+91 ' + userPhone;
+                phoneDisplay.textContent = '+91 ' + (userDigits || '9876543210');
             }
 
             const listContainer = document.getElementById('citizen-complaints-list');
@@ -102,10 +107,13 @@
                 allReports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
             }
 
-            // Filter complaints matching this user's phone number
-            let userReports = allReports.filter(r => r.phone === userPhone || (!r.phone && userPhone === '9876543210'));
+            // Filter complaints matching this user's phone number (last 10 digits match)
+            let userReports = allReports.filter(r => {
+                const reportDigits = extractDigits(r.phone);
+                return (userDigits && reportDigits && userDigits === reportDigits) || (!r.phone && userDigits === '9876543210');
+            });
 
-            // Fallback sample reports if new user has no complaints yet
+            // If user hasn't submitted a specific complaint yet, show all community complaints for tracking
             if (userReports.length === 0) {
                 userReports = allReports;
             }
@@ -126,7 +134,7 @@
                 listContainer.innerHTML = `
                     <div style="text-align: center; color: var(--text-muted); padding: 40px 0; grid-column: 1 / -1;">
                         <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                        <p>No complaints submitted yet under mobile number +91 ${userPhone}.</p>
+                        <p>No complaints submitted yet under mobile number +91 ${userDigits || '9876543210'}.</p>
                     </div>`;
                 return;
             }
@@ -195,6 +203,11 @@
             });
 
             listContainer.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCitizenTracking();
+            setInterval(renderCitizenTracking, 1500);
         });
     </script>
 
