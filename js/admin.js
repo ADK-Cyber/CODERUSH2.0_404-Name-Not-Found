@@ -175,28 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderReports(reports);
     }
 
-    if (window.JanSetuFirebase && window.JanSetuFirebase.isConfigured()) {
-        try {
-            window.JanSetuFirebase.init();
-            unsubscribeReports = firebase.firestore()
-                .collection('complaints')
-                .orderBy('createdAt', 'desc')
-                .onSnapshot(snapshot => {
-                    renderReports(normalizeReportsSnapshot(snapshot));
-                }, error => {
-                    console.warn('Firestore live feed failed, using local API fallback', error);
-                    renderFeed();
-                });
-        } catch (error) {
-            console.warn('Firebase admin feed setup failed, using local API fallback', error);
-            renderFeed();
-        }
-    } else {
-        renderFeed();
-    }
-
-    // Poll local API only when Firebase is not configured.
-    if (!unsubscribeReports) {
-        setInterval(renderFeed, 2000);
-    }
+    // Always poll central REST API (/api/reports) every 1.5 seconds for instant live real-time sync across mobile & desktop
+    renderFeed();
+    setInterval(renderFeed, 1500);
 });

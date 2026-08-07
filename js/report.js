@@ -174,33 +174,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 newReport.media = media;
                 newReport.photo = media.type.startsWith('image/') ? media.url : 'assets/nagpur.jpeg';
                 newReport.video = media.type.startsWith('video/') ? media.url : null;
-            } else if (currentImageDataUrl) {
+            if (currentImageDataUrl && !newReport.photo) {
                 newReport.photo = currentImageDataUrl;
-                newReport.media = {
-                    url: currentImageDataUrl,
-                    path: null,
-                    name: currentMediaFile.name,
-                    type: currentMediaFile.type,
-                    size: currentMediaFile.size,
-                    storage: 'local'
-                };
             }
-
-            await saveReportToFirebase(newReport);
         } catch (err) {
-            console.warn("Firebase save failed, fallback storage will be used", err);
+            console.warn("Media processing warning", err);
         }
 
-        // Post to live backend API as a local/demo backup.
+        let isDup = false;
+        let serverMsg = "";
+
+        // 1. Post to central live backend API FIRST (instant cross-device mobile to admin portal sync)
         try {
-            await fetch('/api/reports', {
+            const res = await fetch('/api/reports', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json; charset=utf-8' },
                 body: JSON.stringify(newReport)
             });
+            if (res.ok) {
+                const data = await res.json();
+                isDup = data.isDuplicate;
+                serverMsg = data.message;
+            }
         } catch (err) {
             console.warn("Backend API offline, fallback to localStorage", err);
         }
+
+        // Optional Firebase backup in background
+        try {
+            saveReportToFirebase(newReport).catch(e => {});
+        } catch (e) {}
 
         // 2. Save to localStorage as backup
         let reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
