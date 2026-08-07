@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Infrastructure Issue - जनसेतु AI</title>
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .report-container {
+            max-width: 600px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--navy);
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+        .location-btn {
+            background: var(--saffron);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+        .location-btn:hover { background: #ea580c; }
+        
+        .photo-upload-box {
+            border: 2px dashed #cbd5e1;
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .photo-upload-box:hover {
+            border-color: var(--teal);
+            background: #f0fdfa;
+        }
+        .photo-upload-box i {
+            font-size: 3rem;
+            color: var(--teal);
+            margin-bottom: 10px;
+        }
+        .photo-preview {
+            max-width: 100%;
+            border-radius: 8px;
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .submit-btn {
+            background: var(--navy);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .submit-btn:hover { background: #0f172a; }
+    </style>
+</head>
+<body class="portal-layout" style="background: #f1f5f9;">
+
+    <!-- Transparent Navbar -->
+    <nav class="navbar portal-nav" style="background: var(--navy);">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
+                <span class="logo-text">जनसेतु AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Nagpur</a>
+                <div id="google_translate_element" style="margin: 0 10px;"></div>
+                <a href="login.html" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="report-container">
+            <h2 style="color: var(--navy); margin-bottom: 10px; text-align: center;">Report Infrastructure Issue</h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Help us keep Nagpur safe by reporting road, sanitation, or utility issues.</p>
+            
+            <form id="report-form">
+                
+                <div class="form-group">
+                    <label>1. Location of Issue</label>
+                    <input type="text" id="address-input" placeholder="Enter street address or landmark" required>
+                    <button type="button" class="location-btn" id="btn-get-location">
+                        <i class="fas fa-map-marker-alt"></i> Use My Live Location
+                    </button>
+                    <p id="location-status" style="font-size: 0.85rem; color: #10b981; margin-top: 8px; display: none;">Location acquired!</p>
+                </div>
+
+                <div class="form-group">
+                    <label>2. Issue Details</label>
+                    <textarea id="issue-desc" rows="3" placeholder="Briefly describe the pothole, broken streetlight, etc." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>3. Upload Photo (Camera/Gallery)</label>
+                    
+                    <input type="file" id="photo-input" accept="image/*" capture="environment" style="display: none;">
+                    
+                    <div class="photo-upload-box" id="upload-box">
+                        <i class="fas fa-camera"></i>
+                        <p style="margin:0; font-weight: 600; color: var(--navy);">Tap to take a photo or choose from gallery</p>
+                    </div>
+                    
+                    <img id="photo-preview" class="photo-preview" alt="Preview">
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Report</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Custom JS -->
+    <script src="js/report.js"></script>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,hi,mr'}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
