@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>जनसेतु AI - Official Portal</title>
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="portal-layout">
+    
+
+    <!-- Transparent Navbar -->
+    <nav class="navbar portal-nav">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
+                <span class="logo-text">जनसेतु AI</span>
+            </a>
+            <div class="nav-links">
+                <div class="nav-dropdown">
+                    <a href="#" class="dropdown-toggle">Digital Services <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="services.html#infrastructure">Infrastructure & Roads</a>
+                        <a href="services.html#sanitation">Sanitation & Waste</a>
+                        <a href="services.html#water">Water & Electricity</a>
+                        <a href="services.html#environment">Environment & Parks</a>
+                    </div>
+                </div>
+                <a href="#">About Nagpur</a>
+                <a href="#">Media Center</a>
+                <div id="google_translate_element" style="margin: 0 10px;"></div>
+                <a href="login.html" class="btn btn-primary">Login</a>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Portal Hero Section -->
+    <header class="portal-hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content-wrapper">
+            
+            <!-- Moto Marquee -->
+            <div class="motto-marquee-portal">
+                <div class="marquee-content">
+                    <span>“आवाज़ आपकी, जिम्मेदारी हमारी।” ⭐</span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span>“आवाज़ आपकी, जिम्मेदारी हमारी।” ⭐</span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span>“आवाज़ आपकी, जिम्मेदारी हमारी।” ⭐</span>
+                </div>
+            </div>
+
+            <div class="portal-hero-text">
+                <h1>Welcome to JanSetu</h1>
+                <p>The unified portal for smart civic management in Nagpur.</p>
+            </div>
+
+            <div class="portal-search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="main-search-input" placeholder="Search for services, reports, or information...">
+                <button type="button" id="voice-search-btn" class="mic-btn" title="Search by Voice (Hindi/Marathi)">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="btn-search">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quick Services Cards (Below Image) -->
+    <div class="quick-services-container container">
+        <a href="explore.html" class="quick-service-card">
+            <div class="qs-icon"><i class="fas fa-map-marked-alt"></i></div>
+            <h3>Explore Map</h3>
+            <p>View civic issues in your neighbourhood</p>
+            <i class="fas fa-arrow-right qs-arrow"></i>
+        </a>
+        <a href="explore.html" class="quick-service-card">
+            <div class="qs-icon"><i class="fas fa-bullhorn"></i></div>
+            <h3>Report Issue</h3>
+            <p>Submit a new civic complaint</p>
+            <i class="fas fa-arrow-right qs-arrow"></i>
+        </a>
+        <a href="#" class="quick-service-card">
+            <div class="qs-icon"><i class="fas fa-search-location"></i></div>
+            <h3>Track Status</h3>
+            <p>Check the progress of your requests</p>
+            <i class="fas fa-arrow-right qs-arrow"></i>
+        </a>
+        <a href="#" class="quick-service-card">
+            <div class="qs-icon"><i class="fas fa-info-circle"></i></div>
+            <h3>City Info</h3>
+            <p>Guidelines, wards, and contact details</p>
+            <i class="fas fa-arrow-right qs-arrow"></i>
+        </a>
+    </div>
+
+    <!-- Essential Digital Services -->
+    <section class="portal-services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Digital Services</h2>
+                <p>Most requested services and categories</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-category">
+                    <i class="fas fa-road category-icon"></i>
+                    <h4>Infrastructure & Roads</h4>
+                    <ul>
+                        <li><a href="#">Pothole Repair</a></li>
+                        <li><a href="#">Street Lighting</a></li>
+                        <li><a href="#">Sidewalk Maintenance</a></li>
+                    </ul>
+                </div>
+                <div class="service-category">
+                    <i class="fas fa-trash-alt category-icon"></i>
+                    <h4>Sanitation & Waste</h4>
+                    <ul>
+                        <li><a href="#">Garbage Collection</a></li>
+                        <li><a href="#">Public Toilets</a></li>
+                        <li><a href="#">Drainage Cleaning</a></li>
+                    </ul>
+                </div>
+                <div class="service-category">
+                    <i class="fas fa-faucet category-icon"></i>
+                    <h4>Water & Electricity</h4>
+                    <ul>
+                        <li><a href="#">Water Supply</a></li>
+                        <li><a href="#">Pipeline Leaks</a></li>
+                        <li><a href="#">Power Outages</a></li>
+                    </ul>
+                </div>
+                <div class="service-category">
+                    <i class="fas fa-tree category-icon"></i>
+                    <h4>Environment & Parks</h4>
+                    <ul>
+                        <li><a href="#">Tree Pruning</a></li>
+                        <li><a href="#">Park Maintenance</a></li>
+                        <li><a href="#">Stray Animals</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
+                    <span style="color: white;">जनसेतु AI</span>
+                </div>
+                <p>Building better communities through transparent, AI-driven civic issue management in Nagpur.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <a href="explore.html">Report Issue</a>
+                <a href="explore.html">Track Status</a>
+                <a href="explore.html">Community Map</a>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Accessibility</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 जनसेतु AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,hi,mr'}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

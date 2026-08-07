@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563EB">
+    <title>Explore Your Neighbourhood - JanSetu AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/explore.css">
+</head>
+<body class="map-body">
+    <nav class="navbar static-nav">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
+                <span>JanSetu AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#how-it-works">How it Works</a>
+                <a href="#" class="btn btn-primary">Report Issue</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="explore-app">
+        <section class="explore-hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Nagpur Civic Reporting</p>
+                <h1>Report an issue in four simple steps</h1>
+                <p class="hero-subtitle">Pick a location, choose a civic category from the dataset, add evidence, and submit a clear report for the Nagpur Municipal Corporation.</p>
+            </div>
+            <div class="hero-badges">
+                <span class="hero-badge"><i class="fa-solid fa-location-dot"></i> Nagpur only</span>
+                <span class="hero-badge"><i class="fa-solid fa-database"></i> Dataset-driven categories</span>
+                <span class="hero-badge"><i class="fa-solid fa-shield-halved"></i> Boundary checked</span>
+            </div>
+        </section>
+
+        <section class="wizard-layout" aria-label="Nagpur civic issue reporting wizard">
+            <div class="wizard-column">
+                <div class="wizard-card">
+                    <div class="stepper" aria-label="Report progress">
+                        <div class="stepper-item active" data-step-indicator="1">
+                            <span>1</span>
+                            <strong>Location</strong>
+                        </div>
+                        <div class="stepper-item" data-step-indicator="2">
+                            <span>2</span>
+                            <strong>Category</strong>
+                        </div>
+                        <div class="stepper-item" data-step-indicator="3">
+                            <span>3</span>
+                            <strong>Photo</strong>
+                        </div>
+                        <div class="stepper-item" data-step-indicator="4">
+                            <span>4</span>
+                            <strong>Details</strong>
+                        </div>
+                    </div>
+
+                    <div class="step-panel active" data-step-panel="1">
+                        <div class="panel-header">
+                            <div>
+                                <p class="panel-kicker">Step 1</p>
+                                <h2>Select a Location</h2>
+                            </div>
+                        </div>
+
+                        <div class="map-stage">
+                            <div class="map-float-controls">
+                                <button class="btn-icon btn-gps" id="btn-geolocation" type="button" title="Use my location">
+                                    <i class="fa-solid fa-crosshairs"></i>
+                                </button>
+                                <div class="floating-search">
+                                    <label class="sr-only" for="address-input">Search for location or address</label>
+                                    <div class="floating-search-bar">
+                                        <span class="floating-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                        <input type="text" id="address-input" placeholder="Search for location or address">
+                                        <button class="btn-floating-search" id="btn-find" type="button">Search</button>
+                                    </div>
+                                    <div class="search-results" id="search-results" aria-live="polite"></div>
+                                </div>
+                            </div>
+                            <div id="map" class="wizard-map"></div>
+                            <div class="map-footer">
+                                <p id="location-status">Pick a point inside Nagpur Municipal Corporation boundaries.</p>
+                            </div>
+                        </div>
+
+                        <div class="panel-actions">
+                            <button class="btn btn-primary btn-block" id="btn-confirm-location" type="button">Confirm Location</button>
+                        </div>
+                    </div>
+
+                    <div class="step-panel" data-step-panel="2">
+                        <div class="panel-header panel-header-split">
+                            <button class="btn-link" type="button" data-step-back="1"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                            <div>
+                                <p class="panel-kicker">Step 2</p>
+                                <h2>Select a Request Category</h2>
+                            </div>
+                        </div>
+
+                        <div class="filter-search">
+                            <label class="sr-only" for="category-search">Search categories</label>
+                            <div class="floating-search-bar compact">
+                                <span class="floating-search-icon"><i class="fa-solid fa-filter"></i></span>
+                                <input type="text" id="category-search" placeholder="Search civic categories">
+                            </div>
+                        </div>
+
+                        <div class="category-list" id="category-list">
+                            <div class="empty-state">Loading categories from the local dataset...</div>
+                        </div>
+                    </div>
+
+                    <div class="step-panel" data-step-panel="3">
+                        <div class="panel-header panel-header-split">
+                            <button class="btn-link" type="button" data-step-back="2"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                            <div>
+                                <p class="panel-kicker">Step 3</p>
+                                <h2>Add Photo</h2>
+                            </div>
+                        </div>
+
+                        <p class="panel-subtitle">Please add a photo (up to 5 images may be added). It helps us to better identify your request.</p>
+
+                        <input type="file" id="photo-input" accept="image/*" capture="environment" multiple class="sr-only">
+                        <label for="photo-input" class="dropzone" id="photo-dropzone">
+                            <div class="dropzone-icon"><i class="fa-solid fa-camera"></i></div>
+                            <strong>Add an image</strong>
+                            <span>Drag and drop, click to browse, or use the camera on mobile.</span>
+                        </label>
+
+                        <div class="thumbnail-grid" id="thumbnail-grid"></div>
+
+                        <div class="panel-actions panel-actions-inline">
+                            <button class="btn btn-secondary btn-block" id="btn-skip-photo" type="button">No Photo</button>
+                            <button class="btn btn-primary btn-block" id="btn-step3-next" type="button">Continue</button>
+                        </div>
+                    </div>
+
+                    <div class="step-panel" data-step-panel="4">
+                        <div class="panel-header panel-header-split">
+                            <button class="btn-link" type="button" data-step-back="3"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                            <div>
+                                <p class="panel-kicker">Step 4</p>
+                                <h2>Enter Details</h2>
+                            </div>
+                        </div>
+
+                        <div class="form-stack">
+                            <div class="input-block">
+                                <label for="issue-description">Description</label>
+                                <textarea id="issue-description" rows="5" placeholder="Describe the issue in a few words..."></textarea>
+                                <p class="field-note">Optional, displayed publicly.</p>
+                            </div>
+
+                            <div class="guideline-box">
+                                <strong>Civic reporting guideline</strong>
+                                <p>Keep the report factual, location-specific, and respectful. Add only details that help crews find and verify the issue quickly.</p>
+                            </div>
+
+                            <div class="input-block">
+                                <label for="custom-address">Nearest Address or Landmark</label>
+                                <input type="text" id="custom-address" placeholder="Auto-filled from Step 1, but editable">
+                            </div>
+                        </div>
+
+                        <div class="panel-actions">
+                            <button class="btn btn-primary btn-block" id="btn-submit-report" type="button">Submit Request</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="preview-column">
+                <div class="preview-card-container">
+                    <div class="preview-badge-header">Preview</div>
+                    <div class="preview-card">
+                        <div class="preview-topline">
+                            <span class="badge badge-public"><i class="fa-regular fa-eye"></i> Public</span>
+                            <span class="badge badge-dept" id="preview-department"><i class="fa-solid fa-landmark"></i> Nagpur Municipal Corporation</span>
+                        </div>
+                        <h3 id="preview-title">Select a category</h3>
+                        <p id="preview-address" class="text-muted">No location selected</p>
+                        <div id="preview-photos" class="preview-photos"></div>
+                        <hr class="divider">
+                        <div class="preview-footer">
+                            <span class="preview-status-chip" id="preview-status">Open</span>
+                            <span class="preview-step-chip" id="preview-step">Step 1 of 4</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <script src="js/map.js"></script>
+</body>
+</html>

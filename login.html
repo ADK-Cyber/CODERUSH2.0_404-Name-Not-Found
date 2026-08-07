@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - जनसेतु AI</title>
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+    
+    <!-- Auth Background -->
+    <div class="auth-bg"></div>
+
+    <div class="auth-container">
+        <!-- Close Button -->
+        <a href="index.html" class="auth-close" title="Go back to Home"><i class="fas fa-times"></i></a>
+        
+        <!-- Logo Header -->
+        <div class="auth-header">
+            <a href="index.html" class="logo justify-center">
+                <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
+                <span class="logo-text">जनसेतु AI</span>
+            </a>
+            <p class="auth-subtitle">Welcome back! Please verify your mobile number.</p>
+        </div>
+
+        <!-- Phone Entry Section -->
+        <div id="phone-section" class="auth-box">
+            <form id="phone-form">
+                <div class="input-group">
+                    <label for="phone">Mobile Number</label>
+                    <div class="phone-input-wrapper">
+                        <span class="country-code">+91</span>
+                        <input type="tel" id="phone" placeholder="Enter 10-digit mobile number" required pattern="[0-9]{10}" maxlength="10">
+                    </div>
+                </div>
+                
+                <!-- reCAPTCHA container for Firebase (Mocked for now) -->
+                <div id="recaptcha-container" style="margin-bottom: 15px;"></div>
+
+                <button type="submit" class="btn btn-primary btn-block">Send OTP</button>
+            </form>
+
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+
+            <a href="explore.html" class="btn btn-outline btn-block guest-btn">
+                Skip Verification (Continue as Guest)
+            </a>
+        </div>
+
+        <!-- OTP Entry Section (Hidden initially) -->
+        <div id="otp-section" class="auth-box" style="display: none;">
+            <p class="otp-instruction">We've sent a verification code to <strong id="display-phone"></strong></p>
+            
+            <form id="otp-form">
+                <div class="input-group">
+                    <label for="otp">One Time Password (OTP)</label>
+                    <input type="text" id="otp" class="otp-input" placeholder="Enter 6-digit OTP" required pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Verify & Login</button>
+            </form>
+
+            <div class="resend-wrapper">
+                <p>Didn't receive the code? <button type="button" id="resend-btn" class="link-btn">Resend OTP</button></p>
+                <p id="timer-text" style="display: none; color: var(--text-muted); font-size: 0.85rem;">Resend available in <span id="timer">30</span>s</p>
+            </div>
+            
+            <button type="button" id="change-phone-btn" class="link-btn mt-3"><i class="fas fa-arrow-left"></i> Change Mobile Number</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    
+    <!-- Auth JS -->
+    <script src="js/auth.js"></script>
+</body>
+</html>
