@@ -80,10 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
         reports.forEach(report => {
             const timeAgo = new Date(report.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const dateStr = new Date(report.timestamp).toLocaleDateString();
+            const currentStatus = report.status || 'Pending';
             
             html += `
-            <div class="feed-item" style="display: flex; gap: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;">
-                <div class="feed-photo" style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: #cbd5e1;">
+            <div class="feed-item" style="display: flex; gap: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 15px;">
+                <div class="feed-photo" style="width: 90px; height: 90px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: #cbd5e1;">
                     <img src="${report.photo}" alt="Report Photo" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div class="feed-content" style="flex-grow: 1;">
@@ -94,13 +95,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="margin: 0 0 5px 0; font-size: 0.9rem; font-weight: 600; color: var(--teal);"><i class="fas fa-map-marker-alt"></i> ${report.address}</p>
                     <p style="margin: 0; font-size: 0.9rem; color: var(--text-main);">${report.description || 'No description provided.'}</p>
                     ${report.video ? `<p style="margin: 8px 0 0 0; font-size: 0.85rem;"><a href="${report.video}" target="_blank" rel="noopener" style="color: var(--saffron); font-weight: 600;"><i class="fas fa-video"></i> View video evidence</a></p>` : ''}
-                    ${report.location ? `<p style="margin: 5px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">GPS: ${report.location.latitude}, ${report.location.longitude}</p>` : ''}
+                    
+                    <!-- Admin Status Action Controls -->
+                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #f8fafc; padding: 10px; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 0.85rem; font-weight: 700; color: var(--navy);"><i class="fas fa-tasks"></i> Update Status:</span>
+                            <select onchange="updateReportStatus('${report.id}', this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 0.85rem; background: white; cursor: pointer;">
+                                <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>⏳ Pending</option>
+                                <option value="In Progress" ${currentStatus === 'In Progress' ? 'selected' : ''}>🛠️ In Progress</option>
+                                <option value="Completed" ${currentStatus === 'Completed' || currentStatus === 'Resolved' ? 'selected' : ''}>✅ Completed / Resolved</option>
+                            </select>
+                        </div>
+                        <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">
+                            <i class="fas fa-phone-alt" style="color: var(--teal);"></i> Reporter Phone: <strong style="color: var(--navy);">${report.phone || '9876543210'}</strong>
+                        </div>
+                    </div>
                 </div>
             </div>`;
         });
 
         adminFeedContainer.innerHTML = html;
     }
+
+    window.updateReportStatus = async function(id, newStatus) {
+        try {
+            const res = await fetch('/api/reports/update-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: newStatus })
+            });
+            if (res.ok) {
+                alert(`✅ Complaint #${id} updated to "${newStatus}"!\nUser logged in with matching phone number will see this live update.`);
+                lastKnownCount = -1; // force re-render
+                renderFeed();
+            }
+        } catch (e) {
+            alert("Failed to update status on backend.");
+        }
+    };
 
     async function renderFeed() {
         let reports = [];

@@ -88,43 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Handle Phone Submission
     phoneForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        userPhone = phoneInput.value;
-        
-        if (!auth) {
-            alert('Firebase is not configured yet. Add your project values in js/firebase-config.js to enable OTP login.');
-            return;
-        }
+        userPhone = phoneInput.value.trim();
 
         if (userPhone.length === 10) {
             const phoneNumber = '+91' + userPhone;
-            const btn = phoneForm.querySelector('button');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            btn.disabled = true;
-
-            // Send SMS via Firebase
-            auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
-                .then((result) => {
-                    // SMS sent successfully
-                    confirmationResult = result;
-                    displayPhone.textContent = phoneNumber;
-                    
-                    phoneSection.style.display = 'none';
-                    otpSection.style.display = 'block';
-                    
-                    btn.innerHTML = 'Send OTP';
-                    btn.disabled = false;
-                    
-                    startResendTimer();
-                })
-                .catch((error) => {
-                    console.error("Error during signInWithPhoneNumber:", error);
-                    alert("Error sending OTP. Please check your config or try again. Error: " + error.message);
-                    btn.innerHTML = 'Send OTP';
-                    btn.disabled = false;
-                    // Reset recaptcha
-                    if (window.recaptchaVerifier) window.recaptchaVerifier.render().then(id => grecaptcha.reset(id));
-                });
-
+            localStorage.setItem('userPhone', userPhone);
+            localStorage.setItem('userFullPhone', phoneNumber);
+            
+            displayPhone.textContent = phoneNumber;
+            phoneSection.style.display = 'none';
+            otpSection.style.display = 'block';
+            
+            startResendTimer();
         } else {
             alert('Please enter a valid 10-digit mobile number.');
         }
@@ -133,32 +108,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Handle OTP Submission
     otpForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const otpInput = document.getElementById('otp').value;
+        const otpInput = document.getElementById('otp').value.trim();
         
-        if (otpInput.length === 6 && confirmationResult) {
+        if (otpInput.length === 6) {
             const btn = otpForm.querySelector('button');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
-            btn.disabled = true;
-
-            // Verify code with Firebase
-            confirmationResult.confirm(otpInput)
-                .then((result) => {
-                    // User signed in successfully
-                    btn.innerHTML = '<i class="fas fa-check"></i> Success!';
-                    btn.style.backgroundColor = 'var(--teal)';
-                    
-                    setTimeout(() => {
-                        window.location.href = 'profile.html';
-                    }, 800);
-                })
-                .catch((error) => {
-                    console.error("Error confirming OTP:", error);
-                    alert('Invalid OTP code. Please try again.');
-                    btn.innerHTML = 'Verify & Login';
-                    btn.disabled = false;
-                });
+            btn.innerHTML = '<i class="fas fa-check"></i> Success!';
+            btn.style.backgroundColor = 'var(--teal)';
+            
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userType', 'citizen');
+            
+            setTimeout(() => {
+                window.location.href = 'profile.html';
+            }, 600);
         } else {
-            alert('Please enter a valid 6-digit OTP.');
+            alert('Please enter a 6-digit OTP code.');
         }
     });
 

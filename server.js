@@ -102,6 +102,35 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // REST API Endpoint: Update Report Status (Pending / In Progress / Completed)
+    if (reqUrl === '/api/reports/update-status' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+            try {
+                const { id, status } = JSON.parse(body);
+                const currentDb = JSON.parse(fs.readFileSync(DB_FILE, 'utf8') || '[]');
+                const reportIndex = currentDb.findIndex(item => item.id === id);
+
+                if (reportIndex !== -1) {
+                    currentDb[reportIndex].status = status || 'Completed';
+                    currentDb[reportIndex].lastUpdated = new Date().toISOString();
+                    fs.writeFileSync(DB_FILE, JSON.stringify(currentDb, null, 2));
+
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: true, report: currentDb[reportIndex] }));
+                } else {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Report not found' }));
+                }
+            } catch (err) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
+            }
+        });
+        return;
+    }
+
     // Serve Static Web Files
     let filePath = path.join(__dirname, reqUrl === '/' ? 'index.html' : reqUrl);
     const exists = fs.existsSync(filePath);

@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             media: null,
             photo: 'assets/nagpur.jpeg',
             timestamp: new Date().toISOString(),
+            phone: localStorage.getItem('userPhone') || '9876543210',
             status: 'Pending'
         };
 
