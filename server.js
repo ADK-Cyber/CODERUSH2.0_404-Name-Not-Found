@@ -74,28 +74,92 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // REST API Endpoint: Save New Report
+function normalizeText(text) {
+    if (!text) return '';
+    return text.toLowerCase().replace(/[^a-z0-9\u0900-\u097F]/g, '');
+}
+
+function isDuplicateReport(r1, r2) {
+    const addr1 = normalizeText(r1.address);
+    const addr2 = normalizeText(r2.address);
+    const desc1 = normalizeText(r1.description);
+    const desc2 = normalizeText(r2.description);
+
+    if (!addr1 || !addr2) return false;
+
+    // Check if location addresses overlap (supports Hindi/Marathi Devanagari & English)
+    const addrMatch = addr1.includes(addr2) || addr2.includes(addr1) || 
+                      (addr1.length >= 4 && addr2.length >= 4 && (addr1.startsWith(addr2.substring(0, 4)) || addr2.startsWith(addr1.substring(0, 4))));
+    
+    // Check if situation / details overlap
+    const descMatch = !desc1 || !desc2 || desc1.includes(desc2) || desc2.includes(desc1) ||
+                      (desc1.length >= 4 && desc2.length >= 4 && (desc1.startsWith(desc2.substring(0, 4)) || desc2.startsWith(desc1.substring(0, 4))));
+
+    return addrMatch && descMatch;
+}
+
+    // REST API Endpoint: Save New Report (with Hindi/Marathi Unicode Support & Duplicate Detection)
     if (reqUrl === '/api/reports' && req.method === 'POST') {
+        req.setEncoding('utf8');
         let body = '';
         req.on('data', chunk => body += chunk);
         req.on('end', () => {
             try {
                 const newReport = JSON.parse(body);
-                if (!newReport.id) {
-                    newReport.id = 'NMC-' + Math.floor(100000 + Math.random() * 900000);
-                }
-                if (!newReport.timestamp) {
-                    newReport.timestamp = new Date().toISOString();
-                }
-
                 const currentDb = JSON.parse(fs.readFileSync(DB_FILE, 'utf8') || '[]');
-                currentDb.unshift(newReport);
-                fs.writeFileSync(DB_FILE, JSON.stringify(currentDb, null, 2));
 
-                res.writeHead(201, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: true, report: newReport }));
+                // Check if a report for the same location & situation already exists
+                const existingIndex = currentDb.findIndex(item => isDuplicateReport(newReport, item));
+
+                if (existingIndex !== -1) {
+                    // Duplicate found! Increment upvotes/report count
+                    const existing = currentDb[existingIndex];
+                    existing.upvotes = (existing.upvotes || 1) + 1;
+                    existing.lastUpdated = new Date().toISOString();
+
+                    // If 10 or more people report the same issue, escalate to HIGHEST PRIORITY!
+                    if (existing.upvotes >= 10) {
+                        existing.priority = 'HIGHEST PRIORITY (URGENT)';
+                    } else if (existing.upvotes >= 5 && existing.priority !== 'HIGHEST PRIORITY (URGENT)') {
+                        existing.priority = 'HIGH';
+                    }
+
+                    // Move updated report to the top of database
+                    currentDb.splice(existingIndex, 1);
+                    currentDb.unshift(existing);
+                    fs.writeFileSync(DB_FILE, JSON.stringify(currentDb, null, 2), 'utf8');
+
+                    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                    res.end(JSON.stringify({
+                        success: true,
+                        isDuplicate: true,
+                        report: existing,
+                        message: `Already uploaded! This issue has already been reported. Added your support (Total Reports: ${existing.upvotes}).`
+                    }));
+                } else {
+                    // New unique report
+                    if (!newReport.id) {
+                        newReport.id = 'NMC-' + Math.floor(100000 + Math.random() * 900000);
+                    }
+                    if (!newReport.timestamp) {
+                        newReport.timestamp = new Date().toISOString();
+                    }
+                    newReport.upvotes = newReport.upvotes || 1;
+                    newReport.priority = newReport.priority || 'NORMAL';
+
+                    currentDb.unshift(newReport);
+                    fs.writeFileSync(DB_FILE, JSON.stringify(currentDb, null, 2), 'utf8');
+
+                    res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8' });
+                    res.end(JSON.stringify({
+                        success: true,
+                        isDuplicate: false,
+                        report: newReport,
+                        message: 'Report submitted successfully!'
+                    }));
+                }
             } catch (err) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
                 res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
             }
         });
@@ -104,6 +168,7 @@ const server = http.createServer((req, res) => {
 
     // REST API Endpoint: Update Report Status (Pending / In Progress / Completed)
     if (reqUrl === '/api/reports/update-status' && req.method === 'POST') {
+        req.setEncoding('utf8');
         let body = '';
         req.on('data', chunk => body += chunk);
         req.on('end', () => {
@@ -115,16 +180,16 @@ const server = http.createServer((req, res) => {
                 if (reportIndex !== -1) {
                     currentDb[reportIndex].status = status || 'Completed';
                     currentDb[reportIndex].lastUpdated = new Date().toISOString();
-                    fs.writeFileSync(DB_FILE, JSON.stringify(currentDb, null, 2));
+                    fs.writeFileSync(DB_FILE, JSON.stringify(currentDb, null, 2), 'utf8');
 
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
                     res.end(JSON.stringify({ success: true, report: currentDb[reportIndex] }));
                 } else {
-                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
                     res.end(JSON.stringify({ error: 'Report not found' }));
                 }
             } catch (err) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
                 res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
             }
         });
