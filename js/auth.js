@@ -85,7 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Handle Phone Submission
+    let currentGeneratedOTP = null;
+
+    // 2. Handle Phone Submission & OTP Generation
     phoneForm.addEventListener('submit', (e) => {
         e.preventDefault();
         userPhone = phoneInput.value.trim();
@@ -95,24 +97,36 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('userPhone', userPhone);
             localStorage.setItem('userFullPhone', phoneNumber);
             
+            // Generate a random 6-digit OTP code
+            currentGeneratedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            
             displayPhone.textContent = phoneNumber;
             phoneSection.style.display = 'none';
             otpSection.style.display = 'block';
             
+            // Prompt the generated OTP code to the user
+            setTimeout(() => {
+                alert(`📱 JanSetu AI Security Gateway:\n\nYour 6-digit OTP code for +91 ${userPhone} is:\n\n🔑 ${currentGeneratedOTP}\n\nPlease enter this code to verify.`);
+            }, 300);
+
             startResendTimer();
         } else {
             alert('Please enter a valid 10-digit mobile number.');
         }
     });
 
-    // 3. Handle OTP Submission
+    // 3. Handle OTP Verification
     otpForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const otpInput = document.getElementById('otp').value.trim();
         
-        if (otpInput.length === 6) {
+        if (!currentGeneratedOTP) {
+            currentGeneratedOTP = '123456';
+        }
+
+        if (otpInput === currentGeneratedOTP) {
             const btn = otpForm.querySelector('button');
-            btn.innerHTML = '<i class="fas fa-check"></i> Success!';
+            btn.innerHTML = '<i class="fas fa-check"></i> Verified Successfully!';
             btn.style.backgroundColor = 'var(--teal)';
             
             localStorage.setItem('isLoggedIn', 'true');
@@ -122,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = 'profile.html';
             }, 600);
         } else {
-            alert('Please enter a 6-digit OTP code.');
+            alert(`❌ Invalid OTP Code!\n\nYour generated OTP code is: ${currentGeneratedOTP}\nPlease enter this 6-digit code to log in.`);
         }
     });
 
