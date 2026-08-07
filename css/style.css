@@ -268,10 +268,8 @@ a {
     height: 90vh; /* Full screen height */
     min-height: 700px;
     background-image: url('../assets/nagpur.jpeg');
-    background-color: rgba(249, 115, 22, 0.4); /* Light transparent orange/saffron */
     background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center 150px; /* Push image further down */
+    background-position: center 30%; /* Normal position */
     display: flex;
     flex-direction: column;
     justify-content: flex-end; /* Push to bottom */
@@ -281,11 +279,7 @@ a {
 .hero-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-<<<<<<< HEAD
-    background: linear-gradient(to bottom, rgba(10, 37, 64, 0.6) 0%, rgba(10, 37, 64, 0.2) 50%, rgba(10, 37, 64, 0.8) 100%);
-=======
-    background: linear-gradient(to bottom, rgba(10, 37, 64, 0.3) 0%, rgba(10, 37, 64, 0.2) 50%, rgba(10, 37, 64, 0.8) 100%);
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
+    background: linear-gradient(to bottom, rgba(10, 37, 64, 0.4) 0%, rgba(10, 37, 64, 0.2) 50%, rgba(10, 37, 64, 0.8) 100%);
     z-index: 1;
 }
 
