@@ -1,3 +1,8 @@
+/**
+ * JanSetu AI - Live Central Backend REST API Server
+ * Handles static web serving and REST API endpoints for cross-device mobile & desktop data synchronization.
+ */
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
