@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile & Tracking - जनसेतु AI</title>
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="profile-layout" style="background: #f8fafc;">
+
+    <!-- Navbar (Solid Variation) -->
+    <nav class="navbar solid-nav" style="background: rgba(10, 37, 64, 0.95); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <div class="container nav-container" style="height: 55px; display: flex; justify-content: space-between; align-items: center;">
+            <a href="index.html" class="logo" style="color: white; text-decoration: none;">
+                <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img" style="height: 35px; border-radius: 4px; margin-right: 10px; vertical-align: middle;">
+                <span class="logo-text" style="vertical-align: middle;">जनसेतु AI</span>
+            </a>
+            <div class="nav-links" style="display: flex; gap: 20px; align-items: center;">
+                <div id="google_translate_element" style="margin: 0 10px;"></div>
+                <a href="explore.html" style="color: white; text-decoration: none;">Explore Map</a>
+                <a href="#" style="color: white; text-decoration: none;"><i class="fas fa-user-circle"></i> My Profile</a>
+                <a href="index.html" class="btn btn-outline" style="color: white; border-color: white; padding: 6px 15px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header Section -->
+    <div class="profile-header-container">
+        <div class="container profile-header">
+            <div class="profile-info">
+                <div class="avatar"><i class="fas fa-user"></i></div>
+                <div>
+                    <h2>Welcome, Citizen!</h2>
+                    <p class="phone-display"><i class="fas fa-phone-alt"></i> Verified Mobile</p>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-box">
+                    <h3>3</h3>
+                    <p>Total Complaints</p>
+                </div>
+                <div class="stat-box active-stat">
+                    <h3>1</h3>
+                    <p>In Progress</p>
+                </div>
+                <div class="stat-box resolved-stat">
+                    <h3>2</h3>
+                    <p>Resolved</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Complaints & Tracking -->
+    <div class="container" style="margin-top: -30px; margin-bottom: 80px; position: relative; z-index: 10;">
+        
+        <div class="tracking-toolbar">
+            <h2><i class="fas fa-tasks text-primary"></i> My Active Reports</h2>
+            <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i> New Complaint</a>
+        </div>
+
+        <div class="complaints-grid">
+            <!-- Complaint Card 1 (In Progress) -->
+            <div class="complaint-card">
+                <div class="card-header">
+                    <span class="status-badge status-progress"><i class="fas fa-spinner fa-spin"></i> In Progress</span>
+                    <span class="report-id">ID: #JAN-4092</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="issue-title">Deep Potholes on Main Road</h3>
+                    <p class="issue-desc">Multiple large potholes causing traffic blocks near the central market area.</p>
+                    <div class="issue-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> Ward 4, Dharampeth</span>
+                        <span><i class="fas fa-calendar-alt"></i> Reported: Oct 12, 2026</span>
+                    </div>
+                </div>
+                <div class="tracking-timeline">
+                    <div class="timeline-step completed">
+                        <div class="step-icon"><i class="fas fa-check"></i></div>
+                        <p>Submitted</p>
+                    </div>
+                    <div class="timeline-step completed">
+                        <div class="step-icon"><i class="fas fa-check"></i></div>
+                        <p>Assigned</p>
+                    </div>
+                    <div class="timeline-step active">
+                        <div class="step-icon"><i class="fas fa-hard-hat"></i></div>
+                        <p>Working</p>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
+                        <p>Resolved</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complaint Card 2 (Resolved) -->
+            <div class="complaint-card resolved-card">
+                <div class="card-header">
+                    <span class="status-badge status-resolved"><i class="fas fa-check-circle"></i> Resolved</span>
+                    <span class="report-id">ID: #JAN-3811</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="issue-title">Streetlight Not Working</h3>
+                    <p class="issue-desc">The streetlights on lane 2 have been out for three days.</p>
+                    <div class="issue-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> Ward 2, Sitabuldi</span>
+                        <span><i class="fas fa-calendar-alt"></i> Reported: Sep 28, 2026</span>
+                    </div>
+                </div>
+                <div class="resolution-note">
+                    <p><strong>Resolution:</strong> Bulb replaced and wiring fixed by NMC Electrical Team on Oct 1, 2026.</p>
+                </div>
+            </div>
+
+            <!-- Complaint Card 3 (Resolved) -->
+            <div class="complaint-card resolved-card">
+                <div class="card-header">
+                    <span class="status-badge status-resolved"><i class="fas fa-check-circle"></i> Resolved</span>
+                    <span class="report-id">ID: #JAN-2905</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="issue-title">Garbage Accumulation</h3>
+                    <p class="issue-desc">Garbage not collected from society gate for a week.</p>
+                    <div class="issue-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> Ward 8, Pratap Nagar</span>
+                        <span><i class="fas fa-calendar-alt"></i> Reported: Aug 15, 2026</span>
+                    </div>
+                </div>
+                <div class="resolution-note">
+                    <p><strong>Resolution:</strong> Waste management truck cleared the area. Schedule updated.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,hi,mr'}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>

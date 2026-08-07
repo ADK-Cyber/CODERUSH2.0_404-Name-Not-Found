@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Your Neighbourhood - जनसेतु AI</title>
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/explore.css">
+</head>
+<body class="map-body">
+    <!-- Navbar -->
+    <nav class="navbar static-nav">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
+                <span>जनसेतु AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#how-it-works">How it Works</a>
+                <a href="#" class="btn btn-primary">Report Issue</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Explorer Section -->
+    <div class="explorer-container">
+        <!-- Header -->
+        <div class="explorer-header">
+            <h1>Explore Your Neighbourhood</h1>
+            <div class="explorer-actions">
+                <button class="btn-action"><i class="fas fa-share-alt"></i> Share</button>
+                <button class="btn-action"><i class="fas fa-print"></i> Print</button>
+                <button class="btn-action"><i class="fas fa-globe"></i> Translate</button>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-section">
+            <label>Lookup your address</label>
+            <div class="search-input-group">
+                <button class="btn-icon" id="btn-geolocation" title="Use my location">
+                    <i class="fas fa-crosshairs"></i>
+                </button>
+                <input type="text" id="address-input" placeholder="Enter an address in Nagpur...">
+                <button class="btn-find" id="btn-find">Find Location</button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>View Requests</label>
+                <select id="filter-time">
+                    <option value="14">Created in last 14 days</option>
+                    <option value="30">Created in last 30 days</option>
+                    <option value="90">Created in last 90 days</option>
+                    <option value="all">All open requests</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Select Category</label>
+                <select id="filter-category">
+                    <option value="all">All Categories</option>
+                    <option value="infrastructure">Infrastructure & Roads</option>
+                    <option value="sanitation">Sanitation & Waste</option>
+                    <option value="water">Water Supply</option>
+                    <option value="electricity">Electricity & Lighting</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Split View: Sidebar + Map -->
+        <div class="split-view">
+            <!-- Sidebar List -->
+            <div class="request-sidebar">
+                <div class="sidebar-header">
+                    <h3>Open Requests</h3>
+                    <p id="request-count">Loading requests...</p>
+                </div>
+                <div class="request-list" id="request-list">
+                    <!-- Javascript will populate this list -->
+                </div>
+            </div>
+
+            <!-- Leaflet Map -->
+            <div class="map-wrapper">
+                <div id="map"></div>
+                
+                <!-- Features Overlay -->
+                <div class="map-overlay">
+                    <div class="overlay-header">
+                        Features <i class="fas fa-caret-down"></i>
+                    </div>
+                    <div class="overlay-content">
+                        <label><input type="checkbox" checked> Police Stations</label>
+                        <label><input type="checkbox" checked> Hospitals</label>
+                        <label><input type="checkbox" checked> Ward Offices</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Custom Map Logic -->
+    <script src="js/map.js"></script>
+</body>
+</html>
