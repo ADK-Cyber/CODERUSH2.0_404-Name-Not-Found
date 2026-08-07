@@ -34,21 +34,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!adminFeedContainer) return;
 
     let lastKnownCount = -1;
+    let unsubscribeReports = null;
 
-    async function renderFeed() {
-        let reports = [];
+    function normalizeReportsSnapshot(snapshot) {
+        const reports = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            reports.push({
+                id: data.id || doc.id,
+                ...data,
+                timestamp: data.timestamp || (data.createdAt && data.createdAt.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString())
+            });
+        });
+        return reports;
+    }
+
+    function renderReports(reports) {
         try {
-            const res = await fetch('/api/reports');
-            if (res.ok) {
-                reports = await res.json();
-                localStorage.setItem('civic_reports', JSON.stringify(reports));
-            } else {
-                reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
-            }
+            localStorage.setItem('civic_reports', JSON.stringify(reports));
         } catch (e) {
-            reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
+            console.warn('Unable to cache reports locally', e);
         }
-        
+
         // Only re-render if count changes to save DOM updates
         if (reports.length === lastKnownCount) return;
         lastKnownCount = reports.length;
@@ -86,6 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <p style="margin: 0 0 5px 0; font-size: 0.9rem; font-weight: 600; color: var(--teal);"><i class="fas fa-map-marker-alt"></i> ${report.address}</p>
                     <p style="margin: 0; font-size: 0.9rem; color: var(--text-main);">${report.description || 'No description provided.'}</p>
+                    ${report.video ? `<p style="margin: 8px 0 0 0; font-size: 0.85rem;"><a href="${report.video}" target="_blank" rel="noopener" style="color: var(--saffron); font-weight: 600;"><i class="fas fa-video"></i> View video evidence</a></p>` : ''}
+                    ${report.location ? `<p style="margin: 5px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">GPS: ${report.location.latitude}, ${report.location.longitude}</p>` : ''}
                 </div>
             </div>`;
         });
@@ -93,9 +102,44 @@ document.addEventListener('DOMContentLoaded', () => {
         adminFeedContainer.innerHTML = html;
     }
 
-    // Initial render
-    renderFeed();
+    async function renderFeed() {
+        let reports = [];
+        try {
+            const res = await fetch('/api/reports');
+            if (res.ok) {
+                reports = await res.json();
+            } else {
+                reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
+            }
+        } catch (e) {
+            reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
+        }
 
-    // Poll for changes every 2 seconds to simulate "live real-time" across tabs/windows
-    setInterval(renderFeed, 2000);
+        renderReports(reports);
+    }
+
+    if (window.JanSetuFirebase && window.JanSetuFirebase.isConfigured()) {
+        try {
+            window.JanSetuFirebase.init();
+            unsubscribeReports = firebase.firestore()
+                .collection('complaints')
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    renderReports(normalizeReportsSnapshot(snapshot));
+                }, error => {
+                    console.warn('Firestore live feed failed, using local API fallback', error);
+                    renderFeed();
+                });
+        } catch (error) {
+            console.warn('Firebase admin feed setup failed, using local API fallback', error);
+            renderFeed();
+        }
+    } else {
+        renderFeed();
+    }
+
+    // Poll local API only when Firebase is not configured.
+    if (!unsubscribeReports) {
+        setInterval(renderFeed, 2000);
+    }
 });

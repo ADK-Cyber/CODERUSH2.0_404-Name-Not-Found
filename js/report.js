@@ -3,25 +3,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const galleryInput = document.getElementById('gallery-input');
     const desktopFileInput = document.getElementById('desktop-file-input');
     const photoPreview = document.getElementById('photo-preview');
+    const videoPreview = document.getElementById('video-preview');
+    const mediaStatus = document.getElementById('media-status');
     const btnGetLocation = document.getElementById('btn-get-location');
     const addressInput = document.getElementById('address-input');
     const locationStatus = document.getElementById('location-status');
     const reportForm = document.getElementById('report-form');
     const issueDesc = document.getElementById('issue-desc');
 
-    let currentPhotoBase64 = null;
+    let currentMediaFile = null;
+    let currentMediaPreview = null;
+    let currentImageDataUrl = null;
+    let currentLocation = null;
 
-    function processPhotoFile(file) {
-        if (file) {
+    function processMediaFile(file) {
+        if (!file) return;
+
+        const maxSizeMb = file.type.startsWith('video/') ? 50 : 10;
+        if (file.size > maxSizeMb * 1024 * 1024) {
+            alert(`Please choose a file smaller than ${maxSizeMb}MB.`);
+            return;
+        }
+
+        currentMediaFile = file;
+        currentMediaPreview = URL.createObjectURL(file);
+        currentImageDataUrl = null;
+
+        if (photoPreview) {
+            photoPreview.style.display = 'none';
+            photoPreview.removeAttribute('src');
+        }
+        if (videoPreview) {
+            videoPreview.style.display = 'none';
+            videoPreview.removeAttribute('src');
+        }
+
+        if (file.type.startsWith('image/') && photoPreview) {
+            photoPreview.src = currentMediaPreview;
+            photoPreview.style.display = 'block';
+
             const reader = new FileReader();
             reader.onload = function(event) {
-                currentPhotoBase64 = event.target.result;
-                if (photoPreview) {
-                    photoPreview.src = currentPhotoBase64;
-                    photoPreview.style.display = 'block';
-                }
+                currentImageDataUrl = event.target.result;
             };
             reader.readAsDataURL(file);
+        } else if (file.type.startsWith('video/') && videoPreview) {
+            videoPreview.src = currentMediaPreview;
+            videoPreview.style.display = 'block';
+        }
+
+        if (mediaStatus) {
+            mediaStatus.textContent = `${file.name} selected`;
         }
     }
 
@@ -29,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (input) {
             input.addEventListener('change', (e) => {
                 if (e.target.files && e.target.files[0]) {
-                    processPhotoFile(e.target.files[0]);
+                    processMediaFile(e.target.files[0]);
                 }
             });
         }
@@ -48,6 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
             (position) => {
                 const lat = position.coords.latitude.toFixed(5);
                 const lon = position.coords.longitude.toFixed(5);
+                currentLocation = {
+                    latitude: Number(position.coords.latitude.toFixed(6)),
+                    longitude: Number(position.coords.longitude.toFixed(6)),
+                    accuracy: Math.round(position.coords.accuracy || 0)
+                };
                 
                 // Simulate reverse geocoding or just use coordinates
                 addressInput.value = `Lat: ${lat}, Lng: ${lon} (Nagpur Area)`;
@@ -66,6 +103,44 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     });
 
+    async function uploadMedia(reportId) {
+        if (!currentMediaFile || !window.JanSetuFirebase || !window.JanSetuFirebase.isConfigured()) {
+            return null;
+        }
+
+        window.JanSetuFirebase.init();
+        const safeName = currentMediaFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const storagePath = `complaint-media/${reportId}/${Date.now()}-${safeName}`;
+        const ref = firebase.storage().ref(storagePath);
+        const snapshot = await ref.put(currentMediaFile, {
+            contentType: currentMediaFile.type
+        });
+        const url = await snapshot.ref.getDownloadURL();
+
+        return {
+            url,
+            path: storagePath,
+            name: currentMediaFile.name,
+            type: currentMediaFile.type,
+            size: currentMediaFile.size
+        };
+    }
+
+    async function saveReportToFirebase(report) {
+        if (!window.JanSetuFirebase || !window.JanSetuFirebase.isConfigured()) {
+            return null;
+        }
+
+        window.JanSetuFirebase.init();
+        await firebase.firestore().collection('complaints').doc(report.id).set({
+            ...report,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        return report;
+    }
+
     // Form Submission
     reportForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -75,16 +150,47 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const submitBtn = reportForm.querySelector('button[type="submit"]');
+        const originalButtonText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.disabled = true;
+
+        const reportId = 'REQ-' + Math.floor(100000 + Math.random() * 900000);
         const newReport = {
-            id: 'REQ-' + Math.floor(Math.random() * 100000),
+            id: reportId,
             address: addressInput.value,
             description: issueDesc.value,
-            photo: currentPhotoBase64 || 'assets/nagpur.jpeg', // Fallback photo if none provided
+            location: currentLocation,
+            media: null,
+            photo: 'assets/nagpur.jpeg',
             timestamp: new Date().toISOString(),
             status: 'Pending'
         };
 
-        // 1. Post to live backend API (works across mobile & desktop)
+        try {
+            const media = await uploadMedia(reportId);
+            if (media) {
+                newReport.media = media;
+                newReport.photo = media.type.startsWith('image/') ? media.url : 'assets/nagpur.jpeg';
+                newReport.video = media.type.startsWith('video/') ? media.url : null;
+            } else if (currentImageDataUrl) {
+                newReport.photo = currentImageDataUrl;
+                newReport.media = {
+                    url: currentImageDataUrl,
+                    path: null,
+                    name: currentMediaFile.name,
+                    type: currentMediaFile.type,
+                    size: currentMediaFile.size,
+                    storage: 'local'
+                };
+            }
+
+            await saveReportToFirebase(newReport);
+        } catch (err) {
+            console.warn("Firebase save failed, fallback storage will be used", err);
+        }
+
+        // Post to live backend API as a local/demo backup.
         try {
             await fetch('/api/reports', {
                 method: 'POST',
@@ -104,5 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Redirect back to home to see the admin feed
         window.location.href = 'index.html#admin-portal';
+        submitBtn.innerHTML = originalButtonText;
+        submitBtn.disabled = false;
     });
 });

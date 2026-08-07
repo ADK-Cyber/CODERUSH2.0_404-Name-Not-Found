@@ -75,11 +75,17 @@
             color: var(--teal);
             margin-bottom: 10px;
         }
-        .photo-preview {
+        .photo-preview,
+        .video-preview {
             max-width: 100%;
             border-radius: 8px;
             display: none;
             margin-top: 15px;
+        }
+        .upload-note {
+            margin-top: 8px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
         
         .submit-btn {
@@ -137,18 +143,18 @@
                 </div>
 
                 <div class="form-group">
-                    <label>3. Upload Photo Evidence</label>
+                    <label>3. Upload Photo or Video Evidence</label>
                     
                     <div class="photo-upload-wrapper">
                         <!-- Mobile Controls (Camera + Gallery) -->
                         <div class="upload-mobile-group">
                             <label class="btn-upload-choice btn-upload-camera">
-                                <i class="fas fa-camera"></i> Take Photo (Camera)
-                                <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+                                <i class="fas fa-camera"></i> Take Photo/Video
+                                <input type="file" id="camera-input" accept="image/*,video/*" capture="environment" style="display: none;">
                             </label>
                             <label class="btn-upload-choice btn-upload-gallery">
                                 <i class="fas fa-images"></i> Choose from Gallery
-                                <input type="file" id="gallery-input" accept="image/*" style="display: none;">
+                                <input type="file" id="gallery-input" accept="image/*,video/*" style="display: none;">
                             </label>
                         </div>
 
@@ -156,14 +162,15 @@
                         <div class="upload-desktop-group">
                             <label class="desktop-upload-dropzone">
                                 <i class="fas fa-cloud-upload-alt"></i>
-                                <p>Click to upload photo file from computer</p>
-                                <span>Supports JPG, PNG, WEBP (Max 10MB)</span>
-                                <input type="file" id="desktop-file-input" accept="image/*" style="display: none;">
+                                <p>Click to upload evidence file from computer</p>
+                                <span>Supports images and videos (Max 50MB)</span>
+                                <input type="file" id="desktop-file-input" accept="image/*,video/*" style="display: none;">
                             </label>
                         </div>
 
-                        <!-- Image Preview -->
+                        <p class="upload-note" id="media-status">No evidence selected yet.</p>
                         <img id="photo-preview" class="photo-preview" alt="Preview" style="max-width: 100%; border-radius: 8px; display: none; margin-top: 15px;">
+                        <video id="video-preview" class="video-preview" controls style="max-width: 100%; border-radius: 8px; display: none; margin-top: 15px;"></video>
                     </div>
                 </div>
 
@@ -171,6 +178,12 @@
             </form>
         </div>
     </main>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
 
     <!-- Custom JS -->
     <script src="js/report.js"></script>

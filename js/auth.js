@@ -1,20 +1,9 @@
-// ==========================================
-// FIREBASE CONFIGURATION
-// Replace the values below with your actual Firebase Project keys
-// ==========================================
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-auth.languageCode = 'en';
+// Initialize Firebase Auth from js/firebase-config.js.
+const firebaseApp = window.JanSetuFirebase ? window.JanSetuFirebase.init() : null;
+const auth = firebaseApp ? firebase.auth() : null;
+if (auth) {
+    auth.languageCode = 'en';
+}
 
 let confirmationResult = null;
 let userPhone = '';
@@ -86,19 +75,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 1. Setup Firebase reCAPTCHA Verifier
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'invisible',
-        'callback': (response) => {
-            // reCAPTCHA solved
-        }
-    });
+    if (auth) {
+        // 1. Setup Firebase reCAPTCHA Verifier
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response) => {
+                // reCAPTCHA solved
+            }
+        });
+    }
 
     // 2. Handle Phone Submission
     phoneForm.addEventListener('submit', (e) => {
         e.preventDefault();
         userPhone = phoneInput.value;
         
+        if (!auth) {
+            alert('Firebase is not configured yet. Add your project values in js/firebase-config.js to enable OTP login.');
+            return;
+        }
+
         if (userPhone.length === 10) {
             const phoneNumber = '+91' + userPhone;
             const btn = phoneForm.querySelector('button');
