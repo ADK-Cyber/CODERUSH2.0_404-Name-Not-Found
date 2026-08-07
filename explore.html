@@ -3,33 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explore - जनसेतु AI</title>
+    <title>Explore Nagpur Map & 311 Live Complaints - जनसेतु AI</title>
     
     <!-- Modern Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Icons -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <!-- Leaflet Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/explore.css">
-</head>
-<body class="portal-layout">
 
-    <!-- Transparent Navbar -->
+    <style>
+        /* Toronto 311 Replica Layout Enhancements */
+        .explore-hero-bar {
+            background: linear-gradient(135deg, #0a2540 0%, #1e3a8a 50%, #0d9488 100%);
+            color: white;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        .explore-hero-bar h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .explore-hero-bar p {
+            color: #cbd5e1;
+            font-size: 1rem;
+            margin: 0 0 16px 0;
+        }
+
+        .filter-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pills-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn-pill {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-btn-pill:hover, .filter-btn-pill.active {
+            background: var(--saffron);
+            border-color: var(--saffron);
+            color: white;
+        }
+
+        .btn-new-complaint {
+            background: var(--saffron);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(251, 146, 60, 0.4);
+            transition: all 0.2s;
+        }
+
+        .btn-new-complaint:hover {
+            background: #ea580c;
+            transform: translateY(-2px);
+        }
+
+        /* 311 Split Screen View */
+        .replica-split-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+            height: calc(100vh - 220px);
+            min-height: 650px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 992px) {
+            .replica-split-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        .map-wrapper-box {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            min-height: 550px;
+        }
+
+        .map-search-bar {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: white;
+            border-radius: 10px;
+            padding: 8px 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            max-width: 380px;
+            width: calc(100% - 30px);
+        }
+
+        .map-search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .complaints-sidebar {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-top {
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-top h3 {
+            font-size: 1.1rem;
+            color: var(--navy);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .sidebar-feed-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sidebar-card:hover, .sidebar-card.active {
+            border-color: var(--teal);
+            box-shadow: 0 6px 20px rgba(13, 148, 136, 0.12);
+            background: #f0fdfa;
+        }
+
+        .sidebar-card-urgent {
+            border: 2px solid #ef4444 !important;
+            background: #fff5f5 !important;
+        }
+
+        /* Marker Pin Animations */
+        .custom-marker {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .marker-pin {
+            width: 32px;
+            height: 32px;
+            border-radius: 50% 50% 50% 0;
+            background: #2563eb;
+            position: absolute;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -16px 0 0 -16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .marker-pin::after {
+            content: '';
+            width: 14px;
+            height: 14px;
+            margin: 9px 0 0 9px;
+            background: #fff;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .marker-high { background: #ef4444; animation: markerPulse 1.5s infinite; }
+        .marker-medium { background: #f97316; }
+        .marker-low { background: #10b981; }
+
+        @keyframes markerPulse {
+            0% { transform: rotate(-45deg) scale(1); }
+            50% { transform: rotate(-45deg) scale(1.15); }
+            100% { transform: rotate(-45deg) scale(1); }
+        }
+
+        /* Leaflet Popup Styling */
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .leaflet-popup-content {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .popup-card-header {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .popup-location-tag {
+            color: var(--teal);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body class="portal-layout" style="background: #f8fafc;">
+
+    <!-- Navbar -->
     <nav class="navbar portal-nav" style="background: var(--navy);">
         <div class="container nav-container">
             <a href="index.html" class="logo">
                 <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
-                <span class="logo-text">जनसेतु AI</span>
+                <span class="logo-text" style="color: white;">जनсеतु AI</span>
             </a>
             <div class="nav-links">
                 <a href="index.html" style="color: white; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-home"></i> Home</a>
                 <div class="nav-dropdown">
-                    <a href="#" class="dropdown-toggle">Digital Services <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i></a>
+                    <a href="services.html" class="dropdown-toggle" style="color: white;">Digital Services <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i></a>
                     <div class="dropdown-menu">
                         <a href="services.html#infrastructure">Infrastructure & Roads</a>
                         <a href="services.html#sanitation">Sanitation & Waste</a>
@@ -37,24 +299,143 @@
                         <a href="services.html#environment">Environment & Parks</a>
                     </div>
                 </div>
-                <a href="about.html">About Nagpur</a>
-                <a href="index.html#media-center">Media Center</a>
+                <a href="about.html" style="color: white;">About Nagpur</a>
+                <a href="index.html#media-center" style="color: white;">Media Center</a>
                 <div id="google_translate_element" style="margin: 0 10px;"></div>
                 <a href="login.html" class="btn btn-primary">Login</a>
             </div>
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
+            <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 
-    <main class="container" style="min-height: 60vh; padding: 100px 20px;">
-        <!-- The user can add new content here -->
-        <div style="text-align: center; margin-top: 50px;">
-            <h1 style="color: var(--navy);">Explore Section Coming Soon</h1>
-            <p style="color: var(--text-muted);">This page is intentionally left blank.</p>
+    <!-- Toronto 311 Hero Bar -->
+    <div class="explore-hero-bar">
+        <div class="container">
+            <div class="filter-toolbar">
+                <div>
+                    <h1><i class="fas fa-map-location-dot"></i> Nagpur 311 Live Complaint Map</h1>
+                    <p>Live interactive location map of citizen complaints across Nagpur Municipal Wards.</p>
+                </div>
+                <button class="btn-new-complaint" onclick="openNewComplaintModal()">
+                    <i class="fas fa-plus-circle"></i> Submit New Complaint
+                </button>
+            </div>
+
+            <div class="filter-pills-group" style="margin-top: 15px;">
+                <button class="filter-btn-pill active" onclick="filterMapCategory('all', this)"><i class="fas fa-layer-group"></i> All Complaints</button>
+                <button class="filter-btn-pill" onclick="filterMapCategory('urgent', this)"><i class="fas fa-fire" style="color: #ef4444;"></i> 🔥 Highest Priority (10+ Reports)</button>
+                <button class="filter-btn-pill" onclick="filterMapCategory('Infrastructure', this)"><i class="fas fa-road"></i> Infrastructure & Roads</button>
+                <button class="filter-btn-pill" onclick="filterMapCategory('Sanitation', this)"><i class="fas fa-recycle"></i> Sanitation & Waste</button>
+                <button class="filter-btn-pill" onclick="filterMapCategory('Water', this)"><i class="fas fa-faucet-drip"></i> Water & Power</button>
+                <button class="filter-btn-pill" onclick="filterMapCategory('Environment', this)"><i class="fas fa-tree"></i> Environment</button>
+            </div>
         </div>
-    </main>
+    </div>
+
+    <!-- Toronto 311 Replica Split View Container -->
+    <div class="replica-split-container">
+        
+        <!-- Left: Interactive Nagpur Map -->
+        <div class="map-wrapper-box">
+            <div class="map-search-bar">
+                <i class="fas fa-search" style="color: var(--teal);"></i>
+                <input type="text" id="map-search-input" placeholder="Search area in Nagpur (e.g. Sitabuldi, Sadar, Ward 12)..." oninput="handleMapSearch(this.value)">
+                <button type="button" id="btn-geolocation" title="Use Live Location" style="border: none; background: none; color: var(--saffron); cursor: pointer; font-size: 1.1rem;">
+                    <i class="fas fa-crosshairs"></i>
+                </button>
+            </div>
+
+            <div id="map"></div>
+        </div>
+
+        <!-- Right: Live Community Feed Sidebar -->
+        <div class="complaints-sidebar">
+            <div class="sidebar-top">
+                <h3><i class="fas fa-bullhorn" style="color: var(--saffron);"></i> Live Complaints</h3>
+                <span id="request-count" style="font-size: 0.8rem; background: #e2e8f0; padding: 4px 10px; border-radius: 12px; font-weight: 700; color: var(--navy);">Loading...</span>
+            </div>
+
+            <div id="request-list" class="sidebar-feed-scroll">
+                <!-- Live cards dynamically rendered via js/map.js -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Hidden elements for wizard compatibility in js/map.js -->
+    <div style="display: none;">
+        <input type="text" id="address-input">
+        <button id="btn-find"></button>
+        <input type="text" id="category-search">
+        <textarea id="issue-description"></textarea>
+        <input type="text" id="custom-address">
+        <button id="btn-confirm-location"></button>
+        <button id="btn-submit-report"></button>
+        <button id="btn-step3-next"></button>
+        <button id="btn-skip-photo"></button>
+        <input type="file" id="photo-input">
+    </div>
+
+
+    <!-- Complaint Submission Modal (Click anywhere on map or button) -->
+    <div id="explore-modal" class="service-modal" style="display: none;">
+        <div class="service-modal-content">
+            <button class="modal-close-btn" onclick="closeExploreModal()"><i class="fas fa-times"></i></button>
+            
+            <h3 style="color: var(--navy); font-size: 1.4rem; margin-bottom: 6px;">Report Civic Issue at Selected Location</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Nagpur Municipal Corporation Interactive 311 Portal</p>
+
+            <form id="explore-complaint-form">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 6px;">Selected Area / Location *</label>
+                    <input type="text" id="exp-address" placeholder="Location in Nagpur" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 6px;">Category / Issue Type *</label>
+                    <select id="exp-category" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white;">
+                        <option value="Infrastructure & Roads">Infrastructure & Roads (Pothole, Broken Tiles)</option>
+                        <option value="Sanitation & Waste">Sanitation & Waste (Garbage Dump, Drain Overflow)</option>
+                        <option value="Water & Electricity">Water & Electricity (Pipeline Leak, Dark Streetlight)</option>
+                        <option value="Environment & Parks">Environment & Parks (Tree Trimming, AQI Concern)</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 6px;">Problem Situation / Details *</label>
+                    <textarea id="exp-details" rows="3" placeholder="Describe the problem in this area..." required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: inherit;"></textarea>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 6px;">Upload Photo Evidence</label>
+                    <div class="photo-upload-wrapper">
+                        <div class="upload-mobile-group">
+                            <label class="btn-upload-choice btn-upload-camera">
+                                <i class="fas fa-camera"></i> Take Photo (Camera)
+                                <input type="file" accept="image/*" capture="environment" style="display: none;">
+                            </label>
+                            <label class="btn-upload-choice btn-upload-gallery">
+                                <i class="fas fa-images"></i> Choose from Gallery
+                                <input type="file" accept="image/*" style="display: none;">
+                            </label>
+                        </div>
+                        <div class="upload-desktop-group">
+                            <label class="desktop-upload-dropzone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload photo file from computer</p>
+                                <input type="file" accept="image/*" style="display: none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1rem; font-weight: 700;">
+                    Submit Complaint & Place Pin on Map
+                </button>
+            </form>
+        </div>
+    </div>
+
 
     <!-- Footer -->
     <footer class="footer">
@@ -68,15 +449,15 @@
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
-                <a href="explore.html">Report Issue</a>
-                <a href="explore.html">Track Status</a>
-                <a href="explore.html">Community Map</a>
+                <a href="services.html#infrastructure">Infrastructure</a>
+                <a href="services.html#sanitation">Sanitation & Waste</a>
+                <a href="services.html#water">Water & Power</a>
+                <a href="services.html#environment">Environment & Parks</a>
             </div>
             <div class="footer-links">
-                <h4>Legal</h4>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Accessibility</a>
+                <h4>Helpline Contacts</h4>
+                <a href="#">NMC Toll Free: 1800-233-3763</a>
+                <a href="#">Swachh Nagpur Helpline: 1969</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -84,15 +465,63 @@
         </div>
     </footer>
 
-    <!-- Custom JS -->
+    <!-- Custom Map JS -->
     <script src="js/script.js"></script>
-
-    <!-- Google Translate Script -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,hi,mr'}, 'google_translate_element');
+    <script src="js/map.js"></script>
+    <script>
+        function openNewComplaintModal() {
+            document.getElementById('exp-address').value = 'Nagpur City Area';
+            document.getElementById('explore-modal').style.display = 'flex';
         }
+
+        function closeExploreModal() {
+            document.getElementById('explore-modal').style.display = 'none';
+        }
+
+        document.getElementById('explore-complaint-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const address = document.getElementById('exp-address').value;
+            const category = document.getElementById('exp-category').value;
+            const details = document.getElementById('exp-details').value;
+
+            const newReport = {
+                id: 'NMC-' + Math.floor(100000 + Math.random() * 900000),
+                address: address + ' (' + category + ')',
+                description: details,
+                photo: 'assets/nagpur.jpeg',
+                timestamp: new Date().toISOString()
+            };
+
+            let isDup = false;
+            let serverMsg = "";
+
+            try {
+                const res = await fetch('/api/reports', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newReport)
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    isDup = data.isDuplicate;
+                    serverMsg = data.message;
+                }
+            } catch (err) {
+                console.warn("Backend API offline", err);
+            }
+
+            if (isDup) {
+                alert('⚠️ ' + (serverMsg || 'Already uploaded! Added your support to existing complaint.'));
+            } else {
+                alert('✅ Complaint submitted successfully!\nPin placed on Nagpur Map.');
+            }
+
+            closeExploreModal();
+            document.getElementById('explore-complaint-form').reset();
+            if (window.refreshNagpurMap) {
+                window.refreshNagpurMap();
+            }
+        });
     </script>
-    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

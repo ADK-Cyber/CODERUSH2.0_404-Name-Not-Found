@@ -222,103 +222,200 @@ function setupWizard() {
     updatePreviewCard();
 }
 
-function setupLegacyRequests(map) {
-    const requestList = document.getElementById('request-list');
-    const requestCount = document.getElementById('request-count');
+let currentMapCategoryFilter = 'all';
+let allNagpurComplaints = [];
 
-    const priorities = ['High', 'Medium', 'Low'];
-    const categories = [
-        'Pothole Repair',
-        'Streetlight not working',
-        'Garbage Dump',
-        'Water Leakage',
-        'Broken Sidewalk',
-        'Stray Animals',
-        'Illegal Parking'
-    ];
-    const statuses = ['New', 'In Progress', 'Assigned'];
-    const mockComplaints = [];
-
-    for (let i = 1; i <= 15; i += 1) {
-        const latOffset = (Math.random() - 0.5) * 0.08;
-        const lngOffset = (Math.random() - 0.5) * 0.08;
-        const priority = priorities[Math.floor(Math.random() * priorities.length)];
-
-        mockComplaints.push({
-            id: i,
-            title: categories[Math.floor(Math.random() * categories.length)],
-            lat: NAGPUR_CENTER[0] + latOffset,
-            lng: NAGPUR_CENTER[1] + lngOffset,
-            priority,
-            status: statuses[Math.floor(Math.random() * statuses.length)],
-            date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toLocaleDateString()
-        });
-    }
-
-    // 3. Render Markers and Populate Sidebar
-    const requestList = document.getElementById('request-list');
-    const requestCount = document.getElementById('request-count');
-    
-    if (requestCount) {
-        requestCount.textContent = `Showing ${mockComplaints.length} open requests`;
-    }
-
-    mockComplaints.forEach((complaint) => {
-        let markerClass = 'marker-low';
-        let badgeClass = 'bg-low';
-
-        if (complaint.priority === 'High') {
-            markerClass = 'marker-high';
-            badgeClass = 'bg-high';
-        } else if (complaint.priority === 'Medium') {
-            markerClass = 'marker-medium';
-            badgeClass = 'bg-medium';
+async function setupLegacyRequests(map) {
+    window.refreshNagpurMap = () => loadAndRenderLiveMapData(map);
+    window.filterMapCategory = (cat, btn) => {
+        currentMapCategoryFilter = cat;
+        if (btn) {
+            document.querySelectorAll('.filter-btn-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
+        renderFilteredNagpurMap(map);
+    };
 
-        // Create Custom HTML Icon for Leaflet
-        const customIcon = L.divIcon({
-            className: 'custom-marker',
-            html: `<div class="marker-pin ${markerClass}"></div>`,
-            iconSize: [30, 42],
-            iconAnchor: [15, 42]
-        });
+    window.handleMapSearch = (query) => {
+        const q = (query || '').toLowerCase().trim();
+        const filtered = allNagpurComplaints.filter(c => 
+            c.address.toLowerCase().includes(q) || 
+            (c.description || '').toLowerCase().includes(q)
+        );
+        renderComplaintsOnMapAndSidebar(map, filtered);
+    };
 
-        const marker = L.marker([complaint.lat, complaint.lng], { icon: customIcon }).addTo(map);
-        marker.bindPopup(`
-            <strong>${complaint.title}</strong><br>
-            Priority: ${complaint.priority}<br>
-            Status: ${complaint.status}<br>
-            Date: ${complaint.date}
-        `);
+    await loadAndRenderLiveMapData(map);
+}
 
-        app.legacyRequestMarkers.push(marker);
+async function loadAndRenderLiveMapData(map) {
+    let reports = [];
+    try {
+        const res = await fetch('/api/reports');
+        if (res.ok) {
+            reports = await res.json();
+        }
+    } catch (e) {
+        console.warn("Using localStorage reports fallback", e);
+        reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
+    }
 
-        if (requestList) {
-            const item = document.createElement('div');
-            item.className = 'request-item';
-            item.innerHTML = `
-                <h4>${complaint.title}</h4>
-                <p>
-                    <span class="status-badge ${badgeClass}">${complaint.priority} Priority</span>
-                    <span>${complaint.status}</span>
-                </p>
-                <p style="margin-top: 5px; font-size: 0.75rem;">Reported: ${complaint.date}</p>
-            `;
+    // Default Nagpur seed complaints if DB is empty
+    if (reports.length === 0) {
+        const sampleLocations = [
+            { address: 'Sitabuldi Main Market, Ward 12', title: 'Pothole & Surface Damage', category: 'Infrastructure & Roads', lat: 21.1458, lng: 79.0882, upvotes: 12, priority: 'HIGHEST PRIORITY (URGENT)' },
+            { address: 'Sadar Bazar Residency Road, Ward 14', title: 'Garbage Dump Overflow', category: 'Sanitation & Waste', lat: 21.1610, lng: 79.0800, upvotes: 8, priority: 'HIGH' },
+            { address: 'Dharampeth College Square, Ward 8', title: 'Water Main Line Burst', category: 'Water & Electricity', lat: 21.1400, lng: 79.0650, upvotes: 14, priority: 'HIGHEST PRIORITY (URGENT)' },
+            { address: 'Civil Lines Near High Court, Ward 10', title: 'Dangerous Overhanging Tree Branch', category: 'Environment & Parks', lat: 21.1550, lng: 79.0720, upvotes: 3, priority: 'NORMAL' },
+            { address: 'Itwari Grain Market, Ward 18', title: 'Drain Sewage Overflow', category: 'Sanitation & Waste', lat: 21.1520, lng: 79.1120, upvotes: 11, priority: 'HIGHEST PRIORITY (URGENT)' }
+        ];
 
-            item.addEventListener('click', () => {
-                map.setView([complaint.lat, complaint.lng], 16, { animate: true });
-                marker.openPopup();
-
-                document.querySelectorAll('.request-item').forEach((el) => {
-                    el.style.background = 'white';
-                });
-                item.style.background = '#f3f4f6';
+        sampleLocations.forEach((item, idx) => {
+            reports.push({
+                id: 'NMC-' + (700000 + idx),
+                address: item.address,
+                description: item.title,
+                category: item.category,
+                lat: item.lat,
+                lng: item.lng,
+                upvotes: item.upvotes,
+                priority: item.priority,
+                photo: 'assets/nagpur.jpeg',
+                timestamp: new Date(Date.now() - idx * 3600000).toISOString()
             });
+        });
+    }
 
-            requestList.appendChild(item);
+    // Ensure all complaints have lat/lng mapped within Nagpur bounds
+    reports.forEach((item, index) => {
+        if (!item.lat || !item.lng) {
+            const latOffset = (Math.sin(index * 1.5) * 0.04);
+            const lngOffset = (Math.cos(index * 1.5) * 0.05);
+            item.lat = NAGPUR_CENTER[0] + latOffset;
+            item.lng = NAGPUR_CENTER[1] + lngOffset;
         }
     });
 
+    allNagpurComplaints = reports;
+    renderFilteredNagpurMap(map);
+}
+
+function renderFilteredNagpurMap(map) {
+    let filtered = allNagpurComplaints;
+    if (currentMapCategoryFilter === 'urgent') {
+        filtered = allNagpurComplaints.filter(c => (c.upvotes || 1) >= 10 || c.priority === 'HIGHEST PRIORITY (URGENT)');
+    } else if (currentMapCategoryFilter !== 'all') {
+        filtered = allNagpurComplaints.filter(c => 
+            (c.category && c.category.includes(currentMapCategoryFilter)) || 
+            (c.address && c.address.includes(currentMapCategoryFilter)) ||
+            (c.description && c.description.includes(currentMapCategoryFilter))
+        );
+    }
+    renderComplaintsOnMapAndSidebar(map, filtered);
+}
+
+function renderComplaintsOnMapAndSidebar(map, complaints) {
+    const requestList = document.getElementById('request-list');
+    const requestCount = document.getElementById('request-count');
+
+    // Clear existing markers
+    if (app.legacyRequestMarkers) {
+        app.legacyRequestMarkers.forEach(m => map.removeLayer(m));
+    }
+    app.legacyRequestMarkers = [];
+
+    if (requestCount) {
+        requestCount.textContent = `Showing ${complaints.length} Live Issues`;
+    }
+
+    if (requestList) {
+        requestList.innerHTML = '';
+    }
+
+    if (complaints.length === 0 && requestList) {
+        requestList.innerHTML = `
+            <div style="text-align: center; color: #64748b; padding: 40px 10px;">
+                <i class="fas fa-search-location" style="font-size: 2.5rem; margin-bottom: 10px; opacity: 0.5;"></i>
+                <p>No complaints found for this filter in Nagpur.</p>
+            </div>`;
+        return;
+    }
+
+    complaints.forEach((complaint) => {
+        const votes = complaint.upvotes || 1;
+        const isUrgent = votes >= 10 || complaint.priority === 'HIGHEST PRIORITY (URGENT)';
+        
+        let markerClass = 'marker-low';
+        if (isUrgent) {
+            markerClass = 'marker-high';
+        } else if (votes >= 5 || complaint.priority === 'HIGH') {
+            markerClass = 'marker-medium';
+        }
+
+        // Custom Leaflet Marker Pin
+        const customIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div class="marker-pin ${markerClass}"></div>`,
+            iconSize: [32, 42],
+            iconAnchor: [16, 42]
+        });
+
+        const marker = L.marker([complaint.lat, complaint.lng], { icon: customIcon }).addTo(map);
+        
+        const popupHtml = `
+            <div style="min-width: 200px;">
+                <div class="popup-card-header">ID: ${complaint.id}</div>
+                <div class="popup-location-tag"><i class="fas fa-map-marker-alt"></i> ${complaint.address}</div>
+                <div style="font-size: 0.9rem; color: #334155; margin-bottom: 8px;">${complaint.description || 'Civic Issue Reported'}</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 8px;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: ${isUrgent ? '#ef4444' : '#0284c7'};">
+                        ${isUrgent ? '🔥 HIGHEST PRIORITY (URGENT)' : '👥 ' + votes + ' Citizen Reports'}
+                    </span>
+                </div>
+            </div>`;
+
+        marker.bindPopup(popupHtml);
+        app.legacyRequestMarkers.push(marker);
+
+        // Sidebar Card Element
+        if (requestList) {
+            const card = document.createElement('div');
+            card.className = `sidebar-card ${isUrgent ? 'sidebar-card-urgent' : ''}`;
+            
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                    <strong style="color: var(--navy); font-size: 0.95rem;">ID: ${complaint.id}</strong>
+                    ${isUrgent ? '<span style="background: #ef4444; color: white; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;">🔥 URGENT</span>' : ''}
+                </div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--teal); margin-bottom: 4px;">
+                    <i class="fas fa-location-dot"></i> ${complaint.address}
+                </div>
+                <div style="font-size: 0.85rem; color: #475569; margin-bottom: 8px; line-height: 1.4;">
+                    ${complaint.description || 'Civic complaint'}
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e2e8f0; padding-top: 8px;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #1e40af;">
+                        <i class="fas fa-users"></i> ${votes} Citizen ${votes === 1 ? 'Report' : 'Reports'}
+                    </span>
+                    <button type="button" style="background: var(--navy); color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                        Focus on Map <i class="fas fa-crosshairs"></i>
+                    </button>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                map.setView([complaint.lat, complaint.lng], 16, { animate: true });
+                marker.openPopup();
+
+                document.querySelectorAll('.sidebar-card').forEach((el) => {
+                    el.classList.remove('active');
+                });
+                card.classList.add('active');
+            });
+
+            requestList.appendChild(card);
+        }
+    });
 }
 
 async function loadBoundaryLayers() {
