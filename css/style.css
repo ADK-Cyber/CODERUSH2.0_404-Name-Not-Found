@@ -269,7 +269,7 @@ a {
     min-height: 700px;
     background-image: url('../assets/nagpur.jpeg');
     background-size: cover;
-    background-position: center top; /* Shift image to show top (Nagpur heading) */
+    background-position: center 15%; /* Shift image slightly down */
     display: flex;
     flex-direction: column;
     justify-content: flex-end; /* Push to bottom */
@@ -279,7 +279,7 @@ a {
 .hero-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(10, 37, 64, 0.3) 0%, rgba(10, 37, 64, 0.2) 50%, rgba(10, 37, 64, 0.8) 100%);
+    background: linear-gradient(to bottom, rgba(10, 37, 64, 0.15) 0%, rgba(10, 37, 64, 0.2) 50%, rgba(10, 37, 64, 0.8) 100%);
     z-index: 1;
 }
 
