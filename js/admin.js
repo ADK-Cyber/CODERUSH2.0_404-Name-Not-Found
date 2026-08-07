@@ -121,6 +121,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="margin: 0; font-size: 0.9rem; color: var(--text-main);">${report.description || 'No description provided.'}</p>
                     ${report.video ? `<p style="margin: 8px 0 0 0; font-size: 0.85rem;"><a href="${report.video}" target="_blank" rel="noopener" style="color: var(--saffron); font-weight: 600;"><i class="fas fa-video"></i> View video evidence</a></p>` : ''}
                     
+                    <!-- JanSetu AI Recommended Action Plan -->
+                    <div style="margin-top: 10px; padding: 8px 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 0.85rem;">
+                        <p style="margin: 0 0 2px 0; font-weight: 700; color: #166534; font-size: 0.82rem;"><i class="fas fa-lightbulb" style="color: #eab308;"></i> JanSetu AI Action Plan Solution:</p>
+                        <p style="margin: 0; color: #14532d; font-weight: 600;">${report.aiSolution ? report.aiSolution.plan : 'Route to Municipal Zonal Engineer for site inspection & cold-mix restoration.'}</p>
+                    </div>
+                    
                     <!-- Admin Status Action Controls -->
                     <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #f8fafc; padding: 10px; border-radius: 8px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
