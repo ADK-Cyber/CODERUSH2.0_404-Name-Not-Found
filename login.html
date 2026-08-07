@@ -34,6 +34,12 @@
             <p class="auth-subtitle">Welcome back! Please verify your mobile number.</p>
         </div>
 
+        <!-- Auth Tabs -->
+        <div class="auth-tabs" style="display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            <button type="button" id="tab-citizen" class="auth-tab-btn active" style="flex: 1; padding: 10px; border: none; background: transparent; font-weight: 600; font-size: 0.95rem; color: var(--saffron); border-bottom: 3px solid var(--saffron); cursor: pointer;"><i class="fas fa-user"></i> Citizen Login</button>
+            <button type="button" id="tab-admin" class="auth-tab-btn" style="flex: 1; padding: 10px; border: none; background: transparent; font-weight: 600; font-size: 0.95rem; color: var(--text-muted); border-bottom: 3px solid transparent; cursor: pointer;"><i class="fas fa-user-shield"></i> Admin Login</button>
+        </div>
+
         <!-- Phone Entry Section -->
         <div id="phone-section" class="auth-box">
             <form id="phone-form">
@@ -58,6 +64,23 @@
             <a href="explore.html" class="btn btn-outline btn-block guest-btn">
                 Skip Verification (Continue as Guest)
             </a>
+        </div>
+
+        <!-- Admin Login Section -->
+        <div id="admin-login-section" class="auth-box" style="display: none;">
+            <form id="admin-login-form">
+                <div class="input-group">
+                    <label for="admin-username">Username</label>
+                    <input type="text" id="admin-username" placeholder="Enter Admin Username" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem;">
+                </div>
+
+                <div class="input-group">
+                    <label for="admin-password">Password</label>
+                    <input type="password" id="admin-password" placeholder="Enter Admin Password" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem;">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Login as Admin</button>
+            </form>
         </div>
 
         <!-- OTP Entry Section (Hidden initially) -->

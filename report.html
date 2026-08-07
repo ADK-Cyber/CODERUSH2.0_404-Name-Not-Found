@@ -107,7 +107,7 @@
                 <span class="logo-text">जनसेतु AI</span>
             </a>
             <div class="nav-links">
-                <a href="index.html">Home</a>
+                <a href="index.html" style="font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-home"></i> Home</a>
                 <a href="about.html">About Nagpur</a>
                 <div id="google_translate_element" style="margin: 0 10px;"></div>
                 <a href="login.html" class="btn btn-primary">Login</a>
@@ -137,16 +137,34 @@
                 </div>
 
                 <div class="form-group">
-                    <label>3. Upload Photo (Camera/Gallery)</label>
+                    <label>3. Upload Photo Evidence</label>
                     
-                    <input type="file" id="photo-input" accept="image/*" capture="environment" style="display: none;">
-                    
-                    <div class="photo-upload-box" id="upload-box">
-                        <i class="fas fa-camera"></i>
-                        <p style="margin:0; font-weight: 600; color: var(--navy);">Tap to take a photo or choose from gallery</p>
+                    <div class="photo-upload-wrapper">
+                        <!-- Mobile Controls (Camera + Gallery) -->
+                        <div class="upload-mobile-group">
+                            <label class="btn-upload-choice btn-upload-camera">
+                                <i class="fas fa-camera"></i> Take Photo (Camera)
+                                <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+                            </label>
+                            <label class="btn-upload-choice btn-upload-gallery">
+                                <i class="fas fa-images"></i> Choose from Gallery
+                                <input type="file" id="gallery-input" accept="image/*" style="display: none;">
+                            </label>
+                        </div>
+
+                        <!-- Desktop Controls (Upload from File / Dropzone) -->
+                        <div class="upload-desktop-group">
+                            <label class="desktop-upload-dropzone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload photo file from computer</p>
+                                <span>Supports JPG, PNG, WEBP (Max 10MB)</span>
+                                <input type="file" id="desktop-file-input" accept="image/*" style="display: none;">
+                            </label>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <img id="photo-preview" class="photo-preview" alt="Preview" style="max-width: 100%; border-radius: 8px; display: none; margin-top: 15px;">
                     </div>
-                    
-                    <img id="photo-preview" class="photo-preview" alt="Preview">
                 </div>
 
                 <button type="submit" class="submit-btn">Submit Report</button>

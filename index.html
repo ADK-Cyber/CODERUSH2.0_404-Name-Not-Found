@@ -27,6 +27,7 @@
                 <span class="logo-text">जनसेतु AI</span>
             </a>
             <div class="nav-links">
+                <a href="index.html" style="font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-home"></i> Home</a>
                 <div class="nav-dropdown">
                     <a href="#" class="dropdown-toggle">Digital Services <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i></a>
                     <div class="dropdown-menu">
@@ -221,12 +222,15 @@
         </div>
     </section>
 
-    <!-- Admin Live Portal Section -->
-    <section id="admin-portal" class="admin-portal" style="padding: 60px 0; background: #e2e8f0; border-top: 4px solid var(--navy);">
+    <!-- Admin Live Portal Section (Hidden by default, unhidden when Admin logs in) -->
+    <section id="admin-portal" class="admin-portal" style="display: none; padding: 60px 0; background: #e2e8f0; border-top: 4px solid var(--navy);">
         <div class="container">
-            <div class="section-header text-center">
+            <div class="section-header text-center" style="position: relative;">
                 <h2 style="color: var(--navy);"><i class="fas fa-user-shield"></i> Live Admin Portal</h2>
                 <p>Real-time updates of citizen infrastructure reports and photo uploads</p>
+                <button id="admin-logout-btn" style="position: absolute; right: 0; top: 0; background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-sign-out-alt"></i> Logout Admin
+                </button>
             </div>
             
             <div class="admin-dashboard">

@@ -32,6 +32,60 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerText = document.getElementById('timer-text');
     const timerSpan = document.getElementById('timer');
 
+    // Tab Switching Logic
+    const tabCitizen = document.getElementById('tab-citizen');
+    const tabAdmin = document.getElementById('tab-admin');
+    const adminLoginSection = document.getElementById('admin-login-section');
+    const adminLoginForm = document.getElementById('admin-login-form');
+
+    if (tabCitizen && tabAdmin) {
+        tabCitizen.addEventListener('click', () => {
+            tabCitizen.classList.add('active');
+            tabCitizen.style.color = 'var(--saffron)';
+            tabCitizen.style.borderBottomColor = 'var(--saffron)';
+            
+            tabAdmin.classList.remove('active');
+            tabAdmin.style.color = 'var(--text-muted)';
+            tabAdmin.style.borderBottomColor = 'transparent';
+
+            phoneSection.style.display = 'block';
+            adminLoginSection.style.display = 'none';
+            otpSection.style.display = 'none';
+        });
+
+        tabAdmin.addEventListener('click', () => {
+            tabAdmin.classList.add('active');
+            tabAdmin.style.color = 'var(--saffron)';
+            tabAdmin.style.borderBottomColor = 'var(--saffron)';
+            
+            tabCitizen.classList.remove('active');
+            tabCitizen.style.color = 'var(--text-muted)';
+            tabCitizen.style.borderBottomColor = 'transparent';
+
+            adminLoginSection.style.display = 'block';
+            phoneSection.style.display = 'none';
+            otpSection.style.display = 'none';
+        });
+    }
+
+    // Handle Admin Login Submission
+    if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const usernameInput = document.getElementById('admin-username').value.trim();
+            const passwordInput = document.getElementById('admin-password').value.trim();
+
+            if ((usernameInput === 'ycce@123' || usernameInput === 'admin') && passwordInput === 'admin') {
+                localStorage.setItem('isAdminLoggedIn', 'true');
+                localStorage.setItem('userType', 'admin');
+                alert('Admin Login Successful!');
+                window.location.href = 'index.html#admin-portal';
+            } else {
+                alert('Invalid Admin Credentials. Please check your username and password.');
+            }
+        });
+    }
+
     // 1. Setup Firebase reCAPTCHA Verifier
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
         'size': 'invisible',

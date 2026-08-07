@@ -1080,3 +1080,101 @@ footer {
         display: none;
     }
 }
+
+/* ==========================================
+   Responsive Photo Upload Component
+   Mobile: Camera & Gallery buttons
+   Desktop/Laptop: File Dropzone / Computer Upload
+   ========================================== */
+
+.photo-upload-wrapper {
+    margin-top: 8px;
+}
+
+.upload-mobile-group {
+    display: none;
+    gap: 12px;
+}
+
+.upload-desktop-group {
+    display: block;
+}
+
+/* Mobile & Touch Device Detection */
+@media (max-width: 768px), (pointer: coarse) {
+    .upload-mobile-group {
+        display: flex !important;
+        flex-direction: column;
+    }
+    .upload-desktop-group {
+        display: none !important;
+    }
+}
+
+.btn-upload-choice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    width: 100%;
+}
+
+.btn-upload-camera {
+    background: linear-gradient(135deg, var(--saffron), #ea580c);
+    color: white;
+    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.3);
+}
+.btn-upload-camera:hover {
+    background: #ea580c;
+}
+
+.btn-upload-gallery {
+    background: #f1f5f9;
+    color: var(--navy);
+    border: 1.5px solid #cbd5e1;
+}
+.btn-upload-gallery:hover {
+    background: #e2e8f0;
+}
+
+.desktop-upload-dropzone {
+    border: 2px dashed #cbd5e1;
+    background: #f8fafc;
+    padding: 26px 20px;
+    border-radius: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: block;
+}
+
+.desktop-upload-dropzone:hover {
+    border-color: var(--teal);
+    background: #f0fdfa;
+}
+
+.desktop-upload-dropzone i {
+    font-size: 2.2rem;
+    color: var(--teal);
+    margin-bottom: 8px;
+}
+
+.desktop-upload-dropzone p {
+    margin: 0;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 0.95rem;
+}
+
+.desktop-upload-dropzone span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+

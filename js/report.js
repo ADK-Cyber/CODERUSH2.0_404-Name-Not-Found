@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const uploadBox = document.getElementById('upload-box');
-    const photoInput = document.getElementById('photo-input');
+    const cameraInput = document.getElementById('camera-input');
+    const galleryInput = document.getElementById('gallery-input');
+    const desktopFileInput = document.getElementById('desktop-file-input');
     const photoPreview = document.getElementById('photo-preview');
     const btnGetLocation = document.getElementById('btn-get-location');
     const addressInput = document.getElementById('address-input');
@@ -10,23 +11,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentPhotoBase64 = null;
 
-    // Trigger file input when clicking the upload box
-    uploadBox.addEventListener('click', () => {
-        photoInput.click();
-    });
-
-    // Handle photo selection (from camera or gallery)
-    photoInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
+    function processPhotoFile(file) {
         if (file) {
             const reader = new FileReader();
             reader.onload = function(event) {
                 currentPhotoBase64 = event.target.result;
-                photoPreview.src = currentPhotoBase64;
-                photoPreview.style.display = 'block';
-                uploadBox.style.display = 'none'; // Hide the box once photo is uploaded
+                if (photoPreview) {
+                    photoPreview.src = currentPhotoBase64;
+                    photoPreview.style.display = 'block';
+                }
             };
             reader.readAsDataURL(file);
+        }
+    }
+
+    [cameraInput, galleryInput, desktopFileInput].forEach(input => {
+        if (input) {
+            input.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    processPhotoFile(e.target.files[0]);
+                }
+            });
         }
     });
 

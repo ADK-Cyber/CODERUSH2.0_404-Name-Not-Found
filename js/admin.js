@@ -1,8 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const adminPortalSection = document.getElementById('admin-portal');
     const adminFeedContainer = document.getElementById('admin-feed-container');
     const totalReportsElement = document.getElementById('total-reports');
     const newReportsElement = document.getElementById('new-reports');
+    const adminLogoutBtn = document.getElementById('admin-logout-btn');
     
+    // Check if admin is logged in
+    function checkAdminAuth() {
+        const isAdmin = localStorage.getItem('isAdminLoggedIn') === 'true';
+        if (adminPortalSection) {
+            if (isAdmin || window.location.hash === '#admin-portal') {
+                adminPortalSection.style.display = 'block';
+            } else {
+                adminPortalSection.style.display = 'none';
+            }
+        }
+    }
+
+    checkAdminAuth();
+
+    if (adminLogoutBtn) {
+        adminLogoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('userType');
+            alert('Admin logged out successfully.');
+            if (adminPortalSection) {
+                adminPortalSection.style.display = 'none';
+            }
+            window.location.hash = '';
+        });
+    }
+
     if (!adminFeedContainer) return;
 
     let lastKnownCount = -1;

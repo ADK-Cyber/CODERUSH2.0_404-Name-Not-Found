@@ -3,55 +3,720 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Services - जनसेतु AI</title>
+    <title>Digital Services Catalog - जनसेतु AI</title>
     
     <!-- Modern Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 
     <style>
-        body { background: #f8fafc; padding-top: 100px; }
-        .services-page-header { text-align: center; margin: 40px 0; }
-        .services-page-header h1 { font-size: 3rem; color: var(--navy); }
-        .services-page-header p { color: var(--text-muted); font-size: 1.2rem; }
-        .placeholder-content { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; }
+        .services-hero {
+            background: linear-gradient(135deg, #0a2540 0%, #1e3a8a 50%, #0d9488 100%);
+            color: white;
+            padding: 120px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .services-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: #f8fafc;
+            clip-path: polygon(0 100%, 100% 100%, 100% 0);
+        }
+
+        .services-hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .services-hero p {
+            font-size: 1.15rem;
+            color: #e2e8f0;
+            max-width: 650px;
+            margin: 0 auto 30px;
+        }
+
+        .services-filter-pills {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .filter-pill {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--saffron);
+            border-color: var(--saffron);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 146, 60, 0.4);
+        }
+
+        .service-category-section {
+            padding: 50px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .category-icon-badge {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .bg-infra { background: linear-gradient(135deg, #0a2540, #3b82f6); }
+        .bg-sanitation { background: linear-gradient(135deg, #059669, #10b981); }
+        .bg-water { background: linear-gradient(135deg, #0284c7, #06b6d4); }
+        .bg-environment { background: linear-gradient(135deg, #15803d, #84cc16); }
+
+        .category-title-group h2 {
+            font-size: 1.8rem;
+            color: var(--navy);
+            margin: 0 0 4px 0;
+            font-weight: 700;
+        }
+
+        .category-title-group p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            border-color: #cbd5e1;
+        }
+
+        .service-card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .text-infra { color: #2563eb; }
+        .text-sanitation { color: #059669; }
+        .text-water { color: #0284c7; }
+        .text-environment { color: #16a34a; }
+
+        .service-card h3 {
+            font-size: 1.15rem;
+            color: var(--navy);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .service-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .service-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            pt: 15px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .service-badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .badge-green { background: #d1fae5; color: #047857; }
+        .badge-blue { background: #e0f2fe; color: #0369a1; }
+        .badge-orange { background: #ffedd5; color: #c2410c; }
+
+        .btn-report-quick {
+            background: #f1f5f9;
+            color: var(--navy);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-report-quick:hover {
+            background: var(--saffron);
+            color: white;
+        }
+
+        /* Direct Service Modal */
+        .service-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 37, 64, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .service-modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 540px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            position: relative;
+            animation: modalSlideUp 0.3s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: #f1f5f9;
+            border: none;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            font-size: 1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
     </style>
 </head>
-<body>
-    
-    <!-- Transparent Navbar (Static for this page) -->
-    <nav class="navbar" style="background: var(--navy);">
+<body class="portal-layout" style="background: #f8fafc;">
+
+    <!-- Navbar -->
+    <nav class="navbar portal-nav" style="background: var(--navy);">
         <div class="container nav-container">
             <a href="index.html" class="logo">
                 <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
                 <span class="logo-text" style="color: white;">जनसेतु AI</span>
             </a>
             <div class="nav-links">
-                <a href="index.html" style="color: white;">Home</a>
-                <a href="explore.html" class="btn btn-primary">Report Issue</a>
+                <a href="index.html" style="color: white; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fas fa-home"></i> Home</a>
+                <div class="nav-dropdown">
+                    <a href="services.html" class="dropdown-toggle" style="color: white;">Digital Services <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="services.html#infrastructure">Infrastructure & Roads</a>
+                        <a href="services.html#sanitation">Sanitation & Waste</a>
+                        <a href="services.html#water">Water & Electricity</a>
+                        <a href="services.html#environment">Environment & Parks</a>
+                    </div>
+                </div>
+                <a href="about.html" style="color: white;">About Nagpur</a>
+                <a href="index.html#media-center" style="color: white;">Media Center</a>
+                <div id="google_translate_element" style="margin: 0 10px;"></div>
+                <a href="login.html" class="btn btn-primary">Login</a>
             </div>
+            <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="services-page-header">
-            <h1>Digital Services Catalog</h1>
-            <p>Access all civic services for Nagpur</p>
+    <!-- Services Hero -->
+    <header class="services-hero">
+        <div class="container">
+            <h1>Digital Civic Services Catalog</h1>
+            <p>Direct citizen reporting and real-time resolution for Nagpur Municipal Corporation services.</p>
+            
+            <div class="services-filter-pills">
+                <a href="#infrastructure" class="filter-pill"><i class="fas fa-road"></i> Infrastructure & Roads</a>
+                <a href="#sanitation" class="filter-pill"><i class="fas fa-recycle"></i> Sanitation & Waste</a>
+                <a href="#water" class="filter-pill"><i class="fas fa-faucet-drip"></i> Water & Electricity</a>
+                <a href="#environment" class="filter-pill"><i class="fas fa-tree"></i> Environment & Parks</a>
+            </div>
         </div>
-        
-        <div class="placeholder-content">
-            <h2 id="infrastructure" style="color: var(--navy); margin-bottom: 20px;">Service Category Details</h2>
-            <p style="color: var(--text-muted); line-height: 1.6;">
-                This page is a placeholder for the Digital Services catalog. In a full implementation, clicking a category from the dropdown menu (e.g., Infrastructure, Sanitation, Water) would navigate here and automatically scroll to detailed information and forms for that specific category.
-            </p>
-            <br>
-            <a href="explore.html" class="btn btn-primary">Open Interactive Map</a>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container" style="padding-bottom: 80px;">
+
+        <!-- 1. INFRASTRUCTURE & ROADS SECTION -->
+        <section id="infrastructure" class="service-category-section">
+            <div class="category-header">
+                <div class="category-icon-badge bg-infra">
+                    <i class="fas fa-road"></i>
+                </div>
+                <div class="category-title-group">
+                    <h2>Infrastructure & Roads</h2>
+                    <p>Road repair, pothole maintenance, footpaths, bridges, and traffic signals.</p>
+                </div>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-car-burst service-card-icon text-infra"></i>
+                        <h3>Pothole & Surface Repair</h3>
+                        <p>Report hazardous road potholes, cracks, or tar damage across Nagpur ward roads.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-green">48-Hr SLA</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Infrastructure & Roads', 'Pothole & Surface Repair')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-traffic-light service-card-icon text-infra"></i>
+                        <h3>Traffic Light & Signage</h3>
+                        <p>Non-functioning traffic signals, broken road signs, or missing warning indicators.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-orange">Priority Response</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Infrastructure & Roads', 'Traffic Light & Signage Failure')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-walking service-card-icon text-infra"></i>
+                        <h3>Footpath & Divider Repair</h3>
+                        <p>Encroachments, damaged pedestrian tiles, or broken median barriers on main roads.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-blue">Standard SLA</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Infrastructure & Roads', 'Footpath Damage')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-bridge service-card-icon text-infra"></i>
+                        <h3>Flyover & Culvert Maintenance</h3>
+                        <p>Expansion joint issues, structural concerns, or guardrail damage on flyovers.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-orange">Urgent Inspection</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Infrastructure & Roads', 'Flyover Damage')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 2. SANITATION & WASTE MANAGEMENT SECTION -->
+        <section id="sanitation" class="service-category-section">
+            <div class="category-header">
+                <div class="category-icon-badge bg-sanitation">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <div class="category-title-group">
+                    <h2>Sanitation & Waste Management</h2>
+                    <p>Cleanliness, garbage collection, public toilets, and drain clearing.</p>
+                </div>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-trash-can service-card-icon text-sanitation"></i>
+                        <h3>Garbage Overflow & Dump Clearance</h3>
+                        <p>Report unattended garbage piles, overflowed community bins, or illegal dumping.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-green">24-Hr Resolution</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Sanitation & Waste', 'Garbage Overflow')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-truck-ramp-box service-card-icon text-sanitation"></i>
+                        <h3>Door-to-Door Waste Collection</h3>
+                        <p>Irregular garbage vehicle visits, missed household collection, or driver complaints.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-blue">NMC Swachh Cell</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Sanitation & Waste', 'Door-to-Door Waste Vehicle Issue')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-water service-card-icon text-sanitation"></i>
+                        <h3>Drain Cleaning & Sewage Overflow</h3>
+                        <p>Blocked stormwater drains, open manholes, or sewage leakage on residential streets.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-orange">Emergency Sanitation</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Sanitation & Waste', 'Drain & Sewage Overflow')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-restroom service-card-icon text-sanitation"></i>
+                        <h3>Public Toilet Hygiene</h3>
+                        <p>Unclean public toilets, water shortage in municipal restrooms, or maintenance issues.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-green">Daily Audit</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Sanitation & Waste', 'Public Toilet Hygiene')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 3. WATER & ELECTRICITY SECTION -->
+        <section id="water" class="service-category-section">
+            <div class="category-header">
+                <div class="category-icon-badge bg-water">
+                    <i class="fas fa-faucet-drip"></i>
+                </div>
+                <div class="category-title-group">
+                    <h2>Water Supply & Electricity Utilities</h2>
+                    <p>Water pipelines, supply schedules, streetlights, and electrical safety.</p>
+                </div>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-faucet service-card-icon text-water"></i>
+                        <h3>Pipeline Leakage & Water Burst</h3>
+                        <p>Major main line water leakage, pipe bursts, or drinking water contamination.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-orange">OCW Emergency</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Water & Electricity', 'Water Pipeline Leakage')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-lightbulb service-card-icon text-water"></i>
+                        <h3>Streetlight Outage & Repair</h3>
+                        <p>Dark street stretches, flickering streetlights, or damaged pole wiring.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-green">24-7 Support</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Water & Electricity', 'Streetlight Outage')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-bolt service-card-icon text-water"></i>
+                        <h3>Transformer & Wire Hazard</h3>
+                        <p>Low hanging electrical wires, sparking transformers, or dangerous electrical boxes.</p>
+                    </div>
+                    <div class{class="service-card-footer">
+                        <span class="service-badge badge-orange">High Priority</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Water & Electricity', 'Electrical Wire Hazard')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-hand-holding-droplet service-card-icon text-water"></i>
+                        <h3>Low Water Pressure & Contamination</h3>
+                        <p>Inadequate water pressure during supply hours or discolored drinking water.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-blue">Testing Desk</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Water & Electricity', 'Water Quality & Pressure')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 4. ENVIRONMENT & PARKS SECTION -->
+        <section id="environment" class="service-category-section" style="border-bottom: none;">
+            <div class="category-header">
+                <div class="category-icon-badge bg-environment">
+                    <i class="fas fa-tree"></i>
+                </div>
+                <div class="category-title-group">
+                    <h2>Environment, Parks & Greenery</h2>
+                    <p>Tree trimming, public garden maintenance, air quality, and pollution control.</p>
+                </div>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-plant-wilt service-card-icon text-environment"></i>
+                        <h3>Dangerous Tree & Branch Trimming</h3>
+                        <p>Overhanging branches threatening power cables or dangerous trees prone to fall.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-orange">Garden Dept.</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Environment & Parks', 'Dangerous Tree Trimming')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-volleyball service-card-icon text-environment"></i>
+                        <h3>Public Park & Play Area Care</h3>
+                        <p>Broken playground equipment, unkept garden grass, or damaged park benches.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-green">Weekly Service</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Environment & Parks', 'Park Maintenance')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-smog service-card-icon text-environment"></i>
+                        <h3>Air Quality & Garbage Burning</h3>
+                        <p>Report open burning of plastic/leaves or severe industrial smoke emissions.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-orange">Pollution Control</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Environment & Parks', 'Garbage Burning & Air Pollution')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div>
+                        <i class="fas fa-seedling service-card-icon text-environment"></i>
+                        <h3>Tree Plantation Drive Request</h3>
+                        <p>Request new tree sapling plantation in community parks or street dividers.</p>
+                    </div>
+                    <div class="service-card-footer">
+                        <span class="service-badge badge-blue">Green Nagpur</span>
+                        <button class="btn-report-quick" onclick="openServiceModal('Environment & Parks', 'Tree Plantation Request')">
+                            <i class="fas fa-plus"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- Quick Service Complaint Modal -->
+    <div id="service-modal" class="service-modal">
+        <div class="service-modal-content">
+            <button class="modal-close-btn" onclick="closeServiceModal()"><i class="fas fa-times"></i></button>
+            
+            <h3 style="color: var(--navy); font-size: 1.4rem; margin-bottom: 6px;" id="modal-service-title">Report Civic Issue</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;" id="modal-service-dept">Nagpur Municipal Corporation</p>
+
+            <form id="quick-service-form">
+                <input type="hidden" id="modal-category">
+                <input type="hidden" id="modal-subcategory">
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 6px;">Location / Address in Nagpur *</label>
+                    <input type="text" id="modal-address" placeholder="e.g. Near Sitabuldi Metro Station, Ward 12" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 6px;">Issue Details *</label>
+                    <textarea id="modal-details" rows="3" placeholder="Describe the issue briefy..." required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: inherit;"></textarea>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 6px;">Upload Photo Evidence (Optional)</label>
+                    
+                    <div class="photo-upload-wrapper">
+                        <!-- Mobile Controls (Camera + Gallery) -->
+                        <div class="upload-mobile-group">
+                            <label class="btn-upload-choice btn-upload-camera">
+                                <i class="fas fa-camera"></i> Take Photo (Camera)
+                                <input type="file" id="modal-camera-photo" accept="image/*" capture="environment" style="display: none;">
+                            </label>
+                            <label class="btn-upload-choice btn-upload-gallery">
+                                <i class="fas fa-images"></i> Choose from Gallery
+                                <input type="file" id="modal-gallery-photo" accept="image/*" style="display: none;">
+                            </label>
+                        </div>
+
+                        <!-- Desktop Controls (Upload from File / Dropzone) -->
+                        <div class="upload-desktop-group">
+                            <label class="desktop-upload-dropzone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload photo file from computer</p>
+                                <span>Supports JPG, PNG, WEBP (Max 10MB)</span>
+                                <input type="file" id="modal-desktop-photo" accept="image/*" style="display: none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1rem; font-weight: 700;">
+                    Submit Complaint Now
+                </button>
+            </form>
         </div>
     </div>
 
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="assets/logohack.jpeg" alt="JanSetu AI Logo" class="logo-img">
+                    <span style="color: white;">जनसेतु AI</span>
+                </div>
+                <p>Building better communities through transparent, AI-driven civic issue management in Nagpur.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <a href="services.html#infrastructure">Infrastructure</a>
+                <a href="services.html#sanitation">Sanitation & Waste</a>
+                <a href="services.html#water">Water & Power</a>
+                <a href="services.html#environment">Environment & Parks</a>
+            </div>
+            <div class="footer-links">
+                <h4>Helpline Contacts</h4>
+                <a href="#">NMC Toll Free: 1800-233-3763</a>
+                <a href="#">Swachh Nagpur Helpline: 1969</a>
+                <a href="#">Emergency Disaster Cell: 108</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 जनसेतु AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+    <script>
+        function openServiceModal(category, subcategory) {
+            document.getElementById('modal-service-title').textContent = subcategory;
+            document.getElementById('modal-service-dept').textContent = 'Department: ' + category;
+            document.getElementById('modal-category').value = category;
+            document.getElementById('modal-subcategory').value = subcategory;
+            document.getElementById('service-modal').style.display = 'flex';
+        }
+
+        function closeServiceModal() {
+            document.getElementById('service-modal').style.display = 'none';
+        }
+
+        document.getElementById('quick-service-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const category = document.getElementById('modal-category').value;
+            const subcategory = document.getElementById('modal-subcategory').value;
+            const address = document.getElementById('modal-address').value;
+            const details = document.getElementById('modal-details').value;
+
+            // Save to localStorage reports
+            const reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
+            const newReport = {
+                id: 'NMC-' + Math.floor(100000 + Math.random() * 900000),
+                address: address + ' (' + subcategory + ')',
+                description: details,
+                photo: 'assets/nagpur.jpeg',
+                timestamp: new Date().toISOString()
+            };
+            reports.unshift(newReport);
+            localStorage.setItem('civic_reports', JSON.stringify(reports));
+
+            alert('✅ Complaint for "' + subcategory + '" submitted successfully!\nTracking ID: ' + newReport.id);
+            closeServiceModal();
+            document.getElementById('quick-service-form').reset();
+        });
+    </script>
 </body>
 </html>

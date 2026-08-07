@@ -1,5 +1,4 @@
 /**
-<<<<<<< HEAD
  * Explore Your Neighbourhood - Nagpur civic issue wizard.
  * This keeps the existing Leaflet map instance and layers the wizard on top.
  */
@@ -57,29 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const map = L.map('map').setView(NAGPUR_CENTER, 13);
     window.exploreMap = map;
 
-=======
- * Explore Your Neighbourhood - Map Logic for Nagpur
- */
-
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Leaflet Map centered on Nagpur
-    // Coordinates for Nagpur City: 21.1458° N, 79.0882° E
-    const nagpurCenter = [21.1458, 79.0882];
-    
-    // Check if map container exists
-    const mapContainer = document.getElementById('map');
-    if (!mapContainer) return;
-
-    const map = L.map('map').setView(nagpurCenter, 13);
-
-    // Add OpenStreetMap tiles
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
     }).addTo(map);
 
-<<<<<<< HEAD
     map.setMaxBounds(NAGPUR_BOUNDS);
     map.options.maxBoundsViscosity = 1.0;
     map.setMinZoom(11);
@@ -269,63 +250,23 @@ function setupLegacyRequests(map) {
             lat: NAGPUR_CENTER[0] + latOffset,
             lng: NAGPUR_CENTER[1] + lngOffset,
             priority,
-=======
-    // 2. Mock Complaint Data Generator for Nagpur
-    const priorities = ['High', 'Medium', 'Low'];
-    const categories = [
-        'Pothole Repair', 'Streetlight not working', 'Garbage Dump', 
-        'Water Leakage', 'Broken Sidewalk', 'Stray Animals', 'Illegal Parking'
-    ];
-    const statuses = ['New', 'In Progress', 'Assigned'];
-
-    const mockComplaints = [];
-    
-    // Generate 15 random complaints around Nagpur center
-    for (let i = 1; i <= 15; i++) {
-        // Random offset for coordinates (roughly within 5-10km of center)
-        const latOffset = (Math.random() - 0.5) * 0.08;
-        const lngOffset = (Math.random() - 0.5) * 0.08;
-        
-        const priority = priorities[Math.floor(Math.random() * priorities.length)];
-        
-        mockComplaints.push({
-            id: i,
-            title: categories[Math.floor(Math.random() * categories.length)],
-            lat: nagpurCenter[0] + latOffset,
-            lng: nagpurCenter[1] + lngOffset,
-            priority: priority,
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
             status: statuses[Math.floor(Math.random() * statuses.length)],
             date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toLocaleDateString()
         });
     }
 
-<<<<<<< HEAD
-=======
     // 3. Render Markers and Populate Sidebar
     const requestList = document.getElementById('request-list');
     const requestCount = document.getElementById('request-count');
     
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
     if (requestCount) {
         requestCount.textContent = `Showing ${mockComplaints.length} open requests`;
     }
 
-<<<<<<< HEAD
     mockComplaints.forEach((complaint) => {
         let markerClass = 'marker-low';
         let badgeClass = 'bg-low';
 
-=======
-    // Dictionary to hold marker references for sidebar clicking
-    const markers = {};
-
-    mockComplaints.forEach(complaint => {
-        // Determine marker color class based on priority
-        let markerClass = 'marker-low';
-        let badgeClass = 'bg-low';
-        
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
         if (complaint.priority === 'High') {
             markerClass = 'marker-high';
             badgeClass = 'bg-high';
@@ -334,10 +275,7 @@ function setupLegacyRequests(map) {
             badgeClass = 'bg-medium';
         }
 
-<<<<<<< HEAD
-=======
         // Create Custom HTML Icon for Leaflet
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
         const customIcon = L.divIcon({
             className: 'custom-marker',
             html: `<div class="marker-pin ${markerClass}"></div>`,
@@ -345,14 +283,7 @@ function setupLegacyRequests(map) {
             iconAnchor: [15, 42]
         });
 
-<<<<<<< HEAD
         const marker = L.marker([complaint.lat, complaint.lng], { icon: customIcon }).addTo(map);
-=======
-        // Add Marker to Map
-        const marker = L.marker([complaint.lat, complaint.lng], { icon: customIcon }).addTo(map);
-        
-        // Popup Content
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
         marker.bindPopup(`
             <strong>${complaint.title}</strong><br>
             Priority: ${complaint.priority}<br>
@@ -360,14 +291,8 @@ function setupLegacyRequests(map) {
             Date: ${complaint.date}
         `);
 
-<<<<<<< HEAD
         app.legacyRequestMarkers.push(marker);
 
-=======
-        markers[complaint.id] = marker;
-
-        // Add to Sidebar
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
         if (requestList) {
             const item = document.createElement('div');
             item.className = 'request-item';
@@ -379,7 +304,6 @@ function setupLegacyRequests(map) {
                 </p>
                 <p style="margin-top: 5px; font-size: 0.75rem;">Reported: ${complaint.date}</p>
             `;
-<<<<<<< HEAD
 
             item.addEventListener('click', () => {
                 map.setView([complaint.lat, complaint.lng], 16, { animate: true });
@@ -388,16 +312,6 @@ function setupLegacyRequests(map) {
                 document.querySelectorAll('.request-item').forEach((el) => {
                     el.style.background = 'white';
                 });
-=======
-            
-            // Add click event to pan map to this marker
-            item.addEventListener('click', () => {
-                map.setView([complaint.lat, complaint.lng], 16, { animate: true });
-                marker.openPopup();
-                
-                // Highlight item
-                document.querySelectorAll('.request-item').forEach(el => el.style.background = 'white');
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
                 item.style.background = '#f3f4f6';
             });
 
@@ -405,7 +319,6 @@ function setupLegacyRequests(map) {
         }
     });
 
-<<<<<<< HEAD
 }
 
 async function loadBoundaryLayers() {
@@ -1168,29 +1081,3 @@ async function useCurrentLocation() {
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
 }
-=======
-    // 4. Geolocation Button
-    const btnGeo = document.getElementById('btn-geolocation');
-    if (btnGeo) {
-        btnGeo.addEventListener('click', () => {
-            if (navigator.geolocation) {
-                btnGeo.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        map.setView([latitude, longitude], 15);
-                        L.circle([latitude, longitude], { radius: 200, color: '#1d4ed8' }).addTo(map);
-                        btnGeo.innerHTML = '<i class="fas fa-crosshairs"></i>';
-                    },
-                    (error) => {
-                        alert("Could not get your location. Displaying Nagpur center.");
-                        btnGeo.innerHTML = '<i class="fas fa-crosshairs"></i>';
-                    }
-                );
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        });
-    }
-});
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
