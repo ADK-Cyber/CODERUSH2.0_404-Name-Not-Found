@@ -35,8 +35,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let lastKnownCount = -1;
 
-    function renderFeed() {
-        const reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
+    async function renderFeed() {
+        let reports = [];
+        try {
+            const res = await fetch('/api/reports');
+            if (res.ok) {
+                reports = await res.json();
+                localStorage.setItem('civic_reports', JSON.stringify(reports));
+            } else {
+                reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
+            }
+        } catch (e) {
+            reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
+        }
         
         // Only re-render if count changes to save DOM updates
         if (reports.length === lastKnownCount) return;

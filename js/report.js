@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Form Submission
-    reportForm.addEventListener('submit', (e) => {
+    reportForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         if (!addressInput.value) {
@@ -84,9 +84,20 @@ document.addEventListener('DOMContentLoaded', () => {
             status: 'Pending'
         };
 
-        // Save to localStorage
+        // 1. Post to live backend API (works across mobile & desktop)
+        try {
+            await fetch('/api/reports', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newReport)
+            });
+        } catch (err) {
+            console.warn("Backend API offline, fallback to localStorage", err);
+        }
+
+        // 2. Save to localStorage as backup
         let reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
-        reports.unshift(newReport); // Add to the beginning
+        reports.unshift(newReport);
         localStorage.setItem('civic_reports', JSON.stringify(reports));
 
         alert("Report submitted successfully! The admin portal has been updated in real-time.");

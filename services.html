@@ -694,15 +694,13 @@
             document.getElementById('service-modal').style.display = 'none';
         }
 
-        document.getElementById('quick-service-form').addEventListener('submit', function(e) {
+        document.getElementById('quick-service-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const category = document.getElementById('modal-category').value;
             const subcategory = document.getElementById('modal-subcategory').value;
             const address = document.getElementById('modal-address').value;
             const details = document.getElementById('modal-details').value;
 
-            // Save to localStorage reports
-            const reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
             const newReport = {
                 id: 'NMC-' + Math.floor(100000 + Math.random() * 900000),
                 address: address + ' (' + subcategory + ')',
@@ -710,6 +708,20 @@
                 photo: 'assets/nagpur.jpeg',
                 timestamp: new Date().toISOString()
             };
+
+            // 1. Post to backend API (live mobile/desktop sync)
+            try {
+                await fetch('/api/reports', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newReport)
+                });
+            } catch (err) {
+                console.warn("Backend API offline, falling back to localStorage", err);
+            }
+
+            // 2. Save to localStorage backup
+            const reports = JSON.parse(localStorage.getItem('civic_reports') || '[]');
             reports.unshift(newReport);
             localStorage.setItem('civic_reports', JSON.stringify(reports));
 
