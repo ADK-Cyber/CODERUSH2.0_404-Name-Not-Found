@@ -31,6 +31,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const adminClearDataBtn = document.getElementById('admin-clear-data-btn');
+    if (adminClearDataBtn) {
+        adminClearDataBtn.addEventListener('click', async () => {
+            const confirmDelete = confirm("⚠️ Are you sure you want to delete ALL complaints from the central database?\n\nThis will clear all active reports and reset stats to 0.");
+            if (confirmDelete) {
+                try {
+                    const res = await fetch('/api/reports/clear-all', { method: 'POST' });
+                    if (res.ok) {
+                        localStorage.removeItem('civic_reports');
+                        alert("✅ All complaint data deleted successfully!");
+                        lastKnownCount = -1;
+                        renderFeed();
+                    } else {
+                        alert("Failed to clear database on server.");
+                    }
+                } catch (e) {
+                    localStorage.removeItem('civic_reports');
+                    alert("✅ Local complaint cache cleared!");
+                    lastKnownCount = -1;
+                    renderFeed();
+                }
+            }
+        });
+    }
+
     if (!adminFeedContainer) return;
 
     let lastKnownCount = -1;

@@ -228,9 +228,14 @@
             <div class="section-header text-center" style="position: relative;">
                 <h2 style="color: var(--navy);"><i class="fas fa-user-shield"></i> Live Admin Portal</h2>
                 <p>Real-time updates of citizen infrastructure reports and photo uploads</p>
-                <button id="admin-logout-btn" style="position: absolute; right: 0; top: 0; background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                    <i class="fas fa-sign-out-alt"></i> Logout Admin
-                </button>
+                <div style="position: absolute; right: 0; top: 0; display: flex; gap: 10px;">
+                    <button id="admin-clear-data-btn" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;" title="Delete all complaints from database">
+                        <i class="fas fa-trash-alt"></i> Clear All Data
+                    </button>
+                    <button id="admin-logout-btn" style="background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-sign-out-alt"></i> Logout Admin
+                    </button>
+                </div>
             </div>
             
             <div class="admin-dashboard">

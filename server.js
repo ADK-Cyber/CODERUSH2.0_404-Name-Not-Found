@@ -131,6 +131,19 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // REST API Endpoint: Clear / Delete All Complaint Data
+    if (reqUrl === '/api/reports/clear-all' && (req.method === 'POST' || req.method === 'DELETE')) {
+        try {
+            fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2));
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'All complaint data deleted successfully' }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to clear database' }));
+        }
+        return;
+    }
+
     // Serve Static Web Files
     let filePath = path.join(__dirname, reqUrl === '/' ? 'index.html' : reqUrl);
     const exists = fs.existsSync(filePath);
