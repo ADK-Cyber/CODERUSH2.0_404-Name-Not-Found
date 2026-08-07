@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navDropdown.addEventListener('mouseleave', () => {
             dropdownTimeout = setTimeout(() => {
                 dropdownMenu.classList.remove('show');
-            }, 5000); // 5 seconds
+            }, 2000); // 2 seconds
         });
     }
 
