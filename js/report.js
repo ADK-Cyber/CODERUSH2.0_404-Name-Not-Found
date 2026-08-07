@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentImageDataUrl = null;
     let currentLocation = null;
 
+    // Initialize JanSetu Voice AI Engine for Mic & Speech Translation
+    if (window.JanSetuVoiceAI) {
+        window.JanSetuVoiceAI.init('btn-voice-mic', 'issue-desc', 'voice-ai-badge', 'voice-ai-translation');
+    }
+
     function processMediaFile(file) {
         if (!file) return;
 

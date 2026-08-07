@@ -19,6 +19,9 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Voice AI Speech Engine -->
+    <script src="js/voice-ai.js"></script>
 
     <style>
         .services-hero {
@@ -613,9 +616,19 @@
                     <input type="text" id="modal-address" placeholder="e.g. Near Sitabuldi Metro Station, Ward 12" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
                 </div>
 
-                <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 6px;">Issue Details *</label>
-                    <textarea id="modal-details" rows="3" placeholder="Describe the issue briefy..." required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: inherit;"></textarea>
+                <div style="margin-bottom: 16px; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="margin: 0; font-weight: 600; font-size: 0.9rem; color: var(--navy);">Issue Details *</label>
+                        <button type="button" id="btn-modal-voice-mic" style="background: #2563eb; color: white; border: none; padding: 5px 12px; border-radius: 18px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(37,99,235,0.2);">
+                            <i class="fas fa-microphone"></i> <span>Speak (Marathi/Hindi/English)</span>
+                        </button>
+                    </div>
+                    <textarea id="modal-details" rows="3" placeholder="Describe the issue or speak in Marathi, Hindi, or English..." required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: inherit;"></textarea>
+
+                    <div id="modal-voice-ai-badge" style="display: none; margin-top: 8px; padding: 8px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 0.82rem; color: #1e40af;">
+                        <p style="margin: 0; font-weight: 600;"><i class="fas fa-robot" style="color: #2563eb;"></i> JanSetu Voice AI translated to English:</p>
+                        <p id="modal-voice-ai-translation" style="margin: 2px 0 0 0; font-style: italic; color: #1e3a8a;"></p>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 20px;">
@@ -686,6 +699,12 @@
     <!-- Custom JS -->
     <script src="js/script.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.JanSetuVoiceAI) {
+                window.JanSetuVoiceAI.init('btn-modal-voice-mic', 'modal-details', 'modal-voice-ai-badge', 'modal-voice-ai-translation');
+            }
+        });
+
         function openServiceModal(category, subcategory) {
             document.getElementById('modal-service-title').textContent = subcategory;
             document.getElementById('modal-service-dept').textContent = 'Department: ' + category;

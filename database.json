@@ -1,24 +1,14 @@
 [
   {
-    "address": "Dharampeth College Road Pothole",
-    "description": "Laptop Complaint Booking Test",
-    "phone": "9876543210",
+    "id": "NMC-868389",
+    "address": "trimurti nagar (Park Maintenance)",
+    "description": "there are no trees ",
     "photo": "assets/nagpur.jpeg",
-    "timestamp": "2026-08-07T19:35:00.000Z",
-    "id": "NMC-975507",
+    "phone": "8080840328",
+    "timestamp": "2026-08-07T19:37:37.205Z",
     "upvotes": 1,
     "priority": "NORMAL",
     "status": "Completed",
-    "lastUpdated": "2026-08-07T19:35:12.415Z"
-  },
-  {
-    "id": "NMC-325921",
-    "address": "trimurti nagar (Streetlight Outage)",
-    "description": "the water is not coming daily",
-    "photo": "assets/nagpur.jpeg",
-    "phone": "8080840328",
-    "timestamp": "2026-08-07T19:30:59.901Z",
-    "upvotes": 1,
-    "priority": "NORMAL"
+    "lastUpdated": "2026-08-07T19:40:02.692Z"
   }
 ]
