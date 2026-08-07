@@ -268,15 +268,10 @@ a {
     height: 90vh; /* Full screen height */
     min-height: 700px;
     background-image: url('../assets/nagpur.jpeg');
-<<<<<<< HEAD
-    background-size: cover;
-    background-position: center 30%; /* Shift image slightly down */
-=======
-    background-color: rgba(10, 37, 64, 0.5); /* Transparent color for top space */
+    background-color: rgba(249, 115, 22, 0.4); /* Light transparent orange/saffron */
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center 150px; /* Push image further down */
->>>>>>> 9263c24a3b97240912cb7f46a8b2a066e3452485
     display: flex;
     flex-direction: column;
     justify-content: flex-end; /* Push to bottom */
